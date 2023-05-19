@@ -45,7 +45,7 @@ use App\Controllers\Auth;
                 <div class="row align-items-center">
                     <div class="card">
                         <div class="col-sm" <div class="card-header">
-                            <h4>Request Failed</h4>
+                            <h4>Request Diedit</h4>
                         </div>
                         <div class="card-body">
                             <div class="empty-state" data-height="400">
