@@ -66,6 +66,10 @@
                                           <input type="text" name="email_karyawan" value="<?= $karyawan->email_karyawan ?>" class="form-control">
                                       </div>
                                       <div class="form-group">
+                                          <label>contact</label>
+                                          <input type="text" name="nomor_telp" pattern="[0-9]+" value="<?= $karyawan->nomor_telp ?>" class="form-control">
+                                      </div>
+                                      <div class="form-group">
                                           <label>Pendidikan Terakhir</label>
                                           <div class="form-group">
                                               <?php
@@ -103,7 +107,7 @@
                                             'Teknik', 'Trading', 'Umum', 'Winding', 'WWTP'
                                         ];
                                         ?>
-                                      <select name="devisi_karyawan[]" class="form-control">
+                                      <select name="devisi_karyawan" class="form-control">
                                           <?php foreach ($departemenList as $devisi_karyawan) : ?>
                                               <option value="<?= $devisi_karyawan ?>" <?= $karyawan->devisi_karyawan === $devisi_karyawan ? 'selected' : '' ?>><?= $devisi_karyawan ?></option>
                                           <?php endforeach; ?>
@@ -119,7 +123,7 @@
                                             'Juru Masak', 'PHL'
                                         ];
                                         ?>
-                                      <select name="jabatan" class="form-control">
+                                      <select name="jabatan_karyawan" class="form-control">
                                           <?php foreach ($jabatanList as $jabatan_karyawan) : ?>
                                               <option value="<?= $jabatan_karyawan ?>" <?= $karyawan->jabatan_karyawan === $jabatan_karyawan ? 'selected' : '' ?>><?= $jabatan_karyawan ?></option>
                                           <?php endforeach; ?>
@@ -134,9 +138,28 @@
                                                 'Tetap', 'Kontrak'
                                             ];
                                             ?>
-                                          <select name="pendidikan_karyawan" class="form-control">
+                                          <select name="status_karyawan" class="form-control">
                                               <?php foreach ($statusList as $status_karyawan) : ?>
                                                   <option value="<?= $status_karyawan ?>" <?= $karyawan->status_karyawan === $status_karyawan ? 'selected' : '' ?>><?= $status_karyawan ?></option>
+                                              <?php endforeach; ?>
+                                          </select>
+                                      </div>
+                                  </div>
+                                  <div class="form-group">
+                                      <label class="form-check-inline">Tanggal Masuk</label>
+                                      <input type="date" name="tanggal_masuk" value="<?= $karyawan->tanggal_masuk ?>" class="form-control form-check-inline" required>
+                                  </div>
+                                  <label>Badan Usaha</label>
+                                  <div class="form-group">
+                                      <div class="form-group">
+                                          <?php
+                                            $usahaList = [
+                                                'HKTI', 'KJP', '198', 'KTN', 'HSB', 'KPN', 'CHM'
+                                            ];
+                                            ?>
+                                          <select name="badan_usaha" class="form-control">
+                                              <?php foreach ($usahaList as $badan_usaha) : ?>
+                                                  <option value="<?= $badan_usaha ?>" <?= $karyawan->badan_usaha === $badan_usaha ? 'selected' : '' ?>><?= $badan_usaha ?></option>
                                               <?php endforeach; ?>
                                           </select>
                                       </div>

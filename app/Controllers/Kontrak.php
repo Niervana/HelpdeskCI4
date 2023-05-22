@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\KaryawanModel;
 use App\Models\KontrakModel;
 
 class Kontrak extends BaseController
@@ -10,11 +11,14 @@ class Kontrak extends BaseController
     {
         helper('form');
         $this->model = new KontrakModel();
+        $this->model = new KaryawanModel();
     }
     public function index()
     {
         // ini buat nampilin semua data di table 
         $builder = $this->db->table('karyawankontrak');
+        $builder->select('*');
+        $builder->join('karyawan', 'karyawan.id_tetap = karyawankontrak.id_tetap');
         $query   = $builder->get()->getResult();
         $data['karyawankontrak'] = $query;
         // inimah buat ngitung total datakaryawan

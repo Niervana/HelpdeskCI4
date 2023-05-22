@@ -8,7 +8,7 @@
 <?= $this->section('content') ?>
 <section class="section">
     <div class="section-header">
-        <h6>Total Data Karyawan Konrak : <?php echo $total_rows; ?></h6>
+        <h6>Total Data Karyawan Kontrak : <?php echo $total_rows; ?></h6>
     </div>
     <?php if (session()->getFlashdata('success')) : ?>
         <div class="alert alert-success alert-dismissible show fade">
@@ -45,9 +45,12 @@
                                     <?php foreach ($karyawankontrak as $no => $value) { ?>
                                         <tr align="center">
                                             <td><?= $value->id_karyawan; ?></td>
-                                            <td width="15%"><?= $value->nama_karyawan; ?></td>
-                                            <td><?= $value->jabatan_karyawan; ?></td>
-                                            <td><?= $value->devisi_karyawan; ?></td>
+                                            <td style="width: 20%;"><?= $value->nama_karyawan; ?></td>
+                                            <td><?= $value->gender_karyawan; ?></td>
+                                            <td style="width: 20%;"><?= $value->jabatan_karyawan; ?></td>
+                                            <td style="width: 20%;"><?= $value->devisi_karyawan; ?></td>
+                                            <td><?= $value->status_karyawan; ?></td>
+
                                             <td width="10%"><a href="<?php echo site_url('karyawan/edit/' . $value->id_tetap); ?>" class="btn btn-success btn-circle btn-sm fas fa-user-pen"></i></a>
                                                 <form action="<?= site_url('karyawan' . $value->id_tetap) ?>" method="post" class="d-inline">
                                                     <?= csrf_field() ?>

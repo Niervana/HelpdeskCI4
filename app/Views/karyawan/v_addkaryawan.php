@@ -64,6 +64,10 @@
                                           <label>email</label>
                                           <input type="text" name="email_karyawan" class="form-control">
                                       </div>
+                                      <div class="form-group">
+                                          <label>contact</label>
+                                          <input type="text" name="nomor_telp" pattern="[0-9]+" class="form-control">
+                                      </div>
                                       <label>Pendidikan Terakhir</label>
                                       <div class="form-group">
                                           <select name="pendidikan_karyawan" class="form-control">
@@ -153,12 +157,27 @@
                                           <option value="PHL">PHL</option>
                                       </select>
                                   </div>
-                                  <label>Jenis Karyawan</label>
+                                  <label>Status Karyawan</label>
                                   <div class="form-group">
-                                      <select class="form-control">
+                                      <select name="status_karyawan" class="form-control">
                                           <option value="Tetap">Tetap</option>
                                           <option value="Kontrak">Kontrak</option>
-
+                                      </select>
+                                  </div>
+                                  <div class="form-group">
+                                      <label class="form-check-inline">Tanggal Masuk</label>
+                                      <input type="date" name="tanggal_masuk" class="form-control form-check-inline" required>
+                                  </div>
+                                  <label>Badan Usaha</label>
+                                  <div class="form-group">
+                                      <select name="badan_usaha" class="form-control">
+                                          <option value="HKTI">HKTI</option>
+                                          <option value="KJP">KJP</option>
+                                          <option value="198">198</option>
+                                          <option value="KTN">KTN</option>
+                                          <option value="HSB">HSB</option>
+                                          <option value="KPN">KPN</option>
+                                          <option value="CHM">CHM</option>
                                       </select>
                                   </div>
                                   <button type="submit" class="btn btn-success">Save <i class="fas fa-floppy-disk"></i></button>
@@ -167,6 +186,9 @@
                               </form>
                           </div>
                       </div>
+                  </div>
+              </div>
+
           </section>
       </div>
       <!-- akhir -->

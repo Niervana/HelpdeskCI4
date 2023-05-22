@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\KaryawanModel;
+use App\Models\KontrakModel;
 
 class Karyawan extends BaseController
 {
@@ -10,6 +11,7 @@ class Karyawan extends BaseController
     {
         helper('form');
         $this->model = new KaryawanModel();
+        $this->model = new KontrakModel();
     }
     public function index()
     {
@@ -31,8 +33,15 @@ class Karyawan extends BaseController
     public function insert()
     {
         $data = $this->request->getPost();
+        $status_karyawan = $data['status_karyawan'];
         $this->db->table('karyawan')->insert($data);
-
+        if ($status_karyawan === 'Kontrak') {
+            $last_id = $this->db->insertID('');
+            $dataKontrak = [
+                'id_tetap' => $last_id,
+            ];
+            $this->db->table('karyawankontrak')->insert($dataKontrak);
+        }
         if ($this->db->affectedRows() > 0) {
             return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Dibuat');
         }
@@ -55,28 +64,37 @@ class Karyawan extends BaseController
     // ini fungsi untuk edit data dari view edit karyawan
     public function update($id)
     {
-        // $data = $this->request->getPost();
-        // unset($data['_method']);
-        $data = [
-            'id_karyawan' => $this->request->getVar('id_karyawan'),
-            'nik_karyawan' => $this->request->getVar('nik_karyawan'),
-            'nama_karyawan' => $this->request->getVar('nama_karyawan'),
-            'gender_karyawan' => $this->request->getVar('gender_karyawan'),
-            'tgl_lahir' => $this->request->getVar('tgl_lahir'),
-            'tmpt_lahir' => $this->request->getVar('tmpt_lahir'),
-            'alamat_karyawan' => $this->request->getVar('alamat_karyawan'),
-            'email_karyawan' => $this->request->getVar('email_karyawan'),
-            'pendidikan_karyawan' => $this->request->getVar('pendidikan_karyawan'),
-            'jurusan_pendidikan' => $this->request->getVar('jurusan_pendidikan'),
-            'jabatan_karyawan' => $this->request->getVar('jabatan_karyawan'),
-            'devisi_karyawan' => $this->request->getVar('devisi_karyawan'),
-            'status_karyawan' => $this->request->getVar('status_karyawan'),
-            'nomor_telp' => $this->request->getVar('nomor_telp'),
-            'tanggal_masuk' => $this->request->getVar('tanggal_masuk'),
-            'badan_usaha' => $this->request->getVar('badan_usaha'),
-        ];
+        $data = $this->request->getPost();
+        unset($data['_method']);
+        $status_karyawan = $data['status_karyawan'];
         $this->db->table('karyawan')->where(['id_tetap' => $id])->update($data);
-        return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Update');
+        if ($status_karyawan === 'Tetap') {
+            $this->db->table('karyawankontrak')->where('id_tetap', $id)->delete();
+        }
+        if ($this->db->affectedRows() > 0) {
+            return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Diperbarui');
+        }
+        // unset($data['_method']);
+        // $data = [
+        //     'id_karyawan' => $this->request->getVar('id_karyawan'),
+        //     'nik_karyawan' => $this->request->getVar('nik_karyawan'),
+        //     'nama_karyawan' => $this->request->getVar('nama_karyawan'),
+        //     'gender_karyawan' => $this->request->getVar('gender_karyawan'),
+        //     'tgl_lahir' => $this->request->getVar('tgl_lahir'),
+        //     'tmpt_lahir' => $this->request->getVar('tmpt_lahir'),
+        //     'alamat_karyawan' => $this->request->getVar('alamat_karyawan'),
+        //     'email_karyawan' => $this->request->getVar('email_karyawan'),
+        //     'pendidikan_karyawan' => $this->request->getVar('pendidikan_karyawan'),
+        //     'jurusan_pendidikan' => $this->request->getVar('jurusan_pendidikan'),
+        //     'jabatan_karyawan' => $this->request->getVar('jabatan_karyawan'),
+        //     'devisi_karyawan' => $this->request->getVar('devisi_karyawan'),
+        //     'status_karyawan' => $this->request->getVar('status_karyawan'),
+        //     'nomor_telp' => $this->request->getVar('nomor_telp'),
+        //     'tanggal_masuk' => $this->request->getVar('tanggal_masuk'),
+        //     'badan_usaha' => $this->request->getVar('badan_usaha'),
+        // ];
+
+
     }
 
     public function delete($id)

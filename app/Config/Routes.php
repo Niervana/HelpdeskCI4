@@ -37,6 +37,8 @@ $routes->get('create-db', function () {
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('login', 'Auth::login');
+$routes->get('register', 'Auth::register');
+$routes->get('forgot', 'Auth::forgot');
 $routes->get('prank', 'Auth::prank');
 $routes->addRedirect('/', 'Home');
 //--------------------------------------------------------------
@@ -55,8 +57,8 @@ $routes->delete('karyawan(:segment)', 'Karyawan::delete/$1');
 $routes->get('karyawan/detail', 'Karyawan::show_detail');
 // ----------------------------------------------------------
 // kontrak
-// $routes->get('kontrak', 'Kontrak::index');
-$routes->presenter('kontrak');
+$routes->get('kontrak', 'Kontrak::index');
+
 // ----------------------------------------------------------
 // account
 $routes->presenter('account');

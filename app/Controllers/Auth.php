@@ -41,6 +41,10 @@ class Auth extends BaseController
         session()->remove('id_users');
         return redirect()->to(site_url('login'));
     }
+    public function forgot()
+    {
+        return view('auth/forgot');
+    }
     public function register()
     {
         return view('auth/register');

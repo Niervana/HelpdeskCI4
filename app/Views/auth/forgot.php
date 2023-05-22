@@ -18,7 +18,6 @@ use App\Controllers\Auth;
     <!-- Template CSS -->
     <link rel="stylesheet" href="<?= base_url() ?>/template/assets/css/style.css">
     <link rel="stylesheet" href="<?= base_url() ?>/template/assets/css/components.css">
-
     <style>
         body {
             overflow-y: hidden;
@@ -29,32 +28,39 @@ use App\Controllers\Auth;
 <body>
     <div id="app">
         <section class="section">
-            <div class="container">
-                <div class="d-flex align-items-center justify-content-center" style="height:100vh">
-                    <div class="card">
-                        <div class="col-sm" <div class="card-header">
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
+                        <div class="login-brand">
+                            <a href=" <?= base_url('/'); ?>" class="logo">
+                                <img src="https://static.wixstatic.com/media/1c5adc_cce1d829b1c1432baeeba778ad268029~mv2.png/v1/fill/w_326,h_163,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/LOGO%20100X500.png" alt="LOGO 100X500.png" style="width: 300px; object-fit: contain; object-position: center center;" srcset="https://static.wixstatic.com/media/1c5adc_cce1d829b1c1432baeeba778ad268029~mv2.png/v1/fill/w_326,h_163,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/LOGO%20100X500.png" fetchpriority="high">
+                            </a>
                         </div>
-                        <div class="card-body">
-                            <div class="empty-state" data-height="400">
-                                <div class="empty-state-icon bg-danger">
-                                    <i class="fas fa-times"></i>
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h4>Forgot Password</h4>
+                            </div>
+
+                            <div class="card-body">
+                                <p class="text-muted">We will send a link to reset your password</p>
+                                <form method="POST">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input id="email" type="email" class="form-control" name="email" tabindex="1" required autofocus>
+                                    </div>
+                                </form>
+                                <div class="form-group">
+                                    <a href="<?= base_url('prank'); ?>"><button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
+                                            Forgot Password
+                                        </button>
                                 </div>
-                                <h2>HTTP Request Failed</h2>
-                                <p class="lead">
-                                    We tried it, but failed when requesting data to the server, just contact IT departement. (Code: <a href="#" class="bb">150598</a>)
-                                </p>
-                                <a href="register" class="btn btn-warning mt-4">Try Again</a>
-                                <a href="login" class="mt-4 bb">Cancel</a>
+
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
     </div>
-
-
-
     </section>
     </div>
 

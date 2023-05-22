@@ -47,6 +47,7 @@
                                         'Pendidikan Terakhir' => 'pendidikan_karyawan',
                                         'Jurusan Terakhir' => 'jurusan_pendidikan',
                                         'Devisi' => 'devisi_karyawan',
+                                        'Jabatan' => 'jabatan_karyawan',
                                         'Status' => 'status_karyawan',
                                         'No.Telp' => 'nomor_telp',
                                         'Tanggal Masuk' => 'tanggal_masuk',

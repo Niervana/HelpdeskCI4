@@ -18,19 +18,7 @@ use App\Controllers\Auth;
     <!-- Template CSS -->
     <link rel="stylesheet" href="<?= base_url() ?>/template/assets/css/style.css">
     <link rel="stylesheet" href="<?= base_url() ?>/template/assets/css/components.css">
-    <!-- Start GA -->
-    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-94034622-3"></script> -->
-    <!-- <script>
-        window.dataLayer = window.dataLayer || [];
 
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'UA-94034622-3');
-    </script> -->
-    <!-- /END GA -->
     <style>
         body {
             overflow-y: hidden;
@@ -77,7 +65,7 @@ use App\Controllers\Auth;
                                         <div class="d-block">
                                             <label for="password" class="control-label">Password</label>
                                             <div class="float-right">
-                                                <a href="auth-forgot-password.html" class="text-small">
+                                                <a href="forgot" class="text-small">
                                                     Hilap Password?
                                                 </a>
                                             </div>
@@ -104,14 +92,38 @@ use App\Controllers\Auth;
                             </div>
                         </div>
                         <div class=" text-muted text-center">
-                            Don't have an account? <a href="auth/register">Create One</a>
+                            Don't have an account? <a href="register">Create One</a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
+    <script>
+        // Simpan data login jika checkbox "remember me" dicentang 
+        const rememberMeCheckbox = document.querySelector('[name="remember" ]');
+        const usernameInput = document.querySelector('[name="email" ]');
+        const passwordInput = document.querySelector('[name="password" ]');
+        rememberMeCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                // Simpan data login ke localStorage atau cookie
+                localStorage.setItem('email', usernameInput.value);
+                localStorage.setItem('password', passwordInput.value);
+            } else {
+                // Hapus data login dari localStorage atau cookie
+                localStorage.removeItem('email');
+                localStorage.removeItem('password');
 
+            }
+        });
+
+        // Isi fields login dengan data yang disimpan jika tersedia
+        if (localStorage.getItem('email') && localStorage.getItem('password')) {
+            usernameInput.value = localStorage.getItem('email');
+            passwordInput.value = localStorage.getItem('password');
+            rememberMeCheckbox.checked = true;
+        }
+    </script>
     <!-- General JS Scripts -->
     <script src="<?= base_url() ?>/template/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="<?= base_url() ?>/template/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
