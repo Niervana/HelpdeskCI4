@@ -46,6 +46,7 @@ $routes->get('dashboard', 'DashboardforHRD::index');
 //--------------------------------------------------------------
 $routes->get('absenoperator', 'Absensi::indexoperator');
 $routes->get('absenstaff', 'Absensi::indexstaff');
+$routes->get('userdatafingerprint', 'Absensi::datauser');
 // -------------------------------------------------------------
 // karyawan
 $routes->get('karyawan', 'Karyawan::index');
@@ -58,6 +59,8 @@ $routes->get('karyawan/detail', 'Karyawan::show_detail');
 // ----------------------------------------------------------
 // kontrak
 $routes->get('kontrak', 'Kontrak::index');
+$routes->get('kontrak/edit/(:num)', 'Kontrak::edit/$1');
+$routes->put('kontrak(:any)', 'Kontrak::updatekontrak/$1');
 
 // ----------------------------------------------------------
 // account

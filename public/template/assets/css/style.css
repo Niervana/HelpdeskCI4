@@ -2980,21 +2980,27 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
   100% {
     -webkit-transform: scale(1.2, 1.2);
     opacity: 0.0; } }
+    
 /*Nirvana Costume*/
-/* Sembunyikan scrollbar dari Chrome, Safari dan Opera */
-body::-webkit-scrollbar {
-  display: none;
-}
-
-/* Sembunyikan scrollbar untuk IE, Edge dan Firefox */
-body {
-  -ms-overflow-style: none;  /* IE dan Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-/* agar text tidak bisa di highlight */
 .noselect {
   -webkit-user-select: none; /* Untuk browser Webkit */
   -moz-user-select: none; /* Untuk browser Firefox */
   -ms-user-select: none; /* Untuk browser Microsoft Edge */
   user-select: none;
-}
+} 
+.clock-icon {
+  font-size: 5em;
+  display: inline-block;
+  transition: transform 1s ease-in-out;
+ }
+
+
+/* Sembunyikan scrollbar dari Chrome, Safari dan Opera */
+/* konfig di hapus */
+/* Sembunyikan scrollbar untuk IE, Edge dan Firefox */
+/* body {
+   -ms-overflow-style: none;  IE dan Edge */
+  scrollbar-width: none;  /* Firefox */
+}  */
+/* agar text tidak bisa di highlight */
+

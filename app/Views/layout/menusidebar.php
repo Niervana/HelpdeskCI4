@@ -12,6 +12,7 @@
     <ul class="dropdown-menu">
         <li><a class="nav-link" href="<?= base_url('absenstaff'); ?>">Staff</a></li>
         <li><a class="nav-link" href="<?= base_url('absenoperator'); ?>">Operator</a></li>
+        <li><a class="nav-link" href="<?= base_url('userdatafingerprint'); ?>">Userdata</a></li>
     </ul>
 </li>
 <li class="nav-item dropdown">

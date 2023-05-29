@@ -26,62 +26,101 @@ class Kontrak extends BaseController
         $data['total_rows'] = $model->total_rows();
         return view('kontrak/v_get_kontrak', $data);
     }
-    // ini fungsi untuk nge route ke view addkaryawan
-    // public function add()
-    // {
-    //     return view('karyawan/v_addkaryawan');
-    // }
-    // ini fungsi untuk nambah data dari view add karyawan
-    // public function insert()
-    // {
-    //     $data = $this->request->getPost();
-    //     $this->db->table('karyawan')->insert($data);
 
-    //     if ($this->db->affectedRows() > 0) {
-    //         return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Dibuat');
-    //     }
-    // }
     // ini fungsi untuk nge route ke view editkaryawan
-    // public function edit($id = null)
-    // {
-    //     if ($id != null) {
-    //         $query = $this->db->table('karyawan')->getWhere(['id_tetap' => $id]);
-    //         if ($query->resultID->num_rows > 0) {
-    //             $data['karyawan'] = $query->getRow();
-    //             return view('karyawan/v_editkaryawan', $data);
-    //         } else {
-    //             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-    //         }
-    //     } else {
-    //         throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-    //     }
-    // }
+    public function edit($id = null)
+    {
+        if ($id != null) {
+            $query = $this->db->table('karyawankontrak')->getWhere(['id_kontrak' => $id]);
+            if ($query->resultID->num_rows > 0) {
+                $data['karyawankontrak'] = $query->getRow();
+                return view('kontrak/v_edit_kontrak', $data);
+            } else {
+                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            }
+        } else {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+    }
     // ini fungsi untuk edit data dari view edit karyawan
+    //versi 1
+    public function updatekontrak($id)
+    {
+        $data = [
+            // 'id_kontrak' => $this->request->getVar('id_kontrak'),
+            // // 'id_tetap' => $this->request->getVar('id_tetap'),
+            'kontrak_awal' => $this->request->getVar('kontrak_awal'),
+            'kontrak_akhir' => $this->request->getVar('kontrak_akhir'),
+            'status' => $this->request->getVar('status'),
+            'renew' => $this->request->getVar('renew')
+
+        ];
+
+        $this->db->table('karyawankontrak')->where('id_kontrak', $id)->update($data);
+        return redirect()->to(site_url('kontrak'))->with('success', 'Data Berhasil Update');
+    }
+    //versi2
     // public function update($id)
     // {
-    //     // $data = $this->request->getPost();
-    //     // unset($data['_method']);
-    //     $data = [
-    //         'id_karyawan' => $this->request->getVar('id_karyawan'),
-    //         'nik_karyawan' => $this->request->getVar('nik_karyawan'),
-    //         'nama_karyawan' => $this->request->getVar('nama_karyawan'),
-    //         'gender_karyawan' => $this->request->getVar('gender_karyawan'),
-    //         'tgl_lahir' => $this->request->getVar('tgl_lahir'),
-    //         'tmpt_lahir' => $this->request->getVar('tmpt_lahir'),
-    //         'alamat_karyawan' => $this->request->getVar('alamat_karyawan'),
-    //         'email_karyawan' => $this->request->getVar('email_karyawan'),
-    //         'pendidikan_karyawan' => $this->request->getVar('pendidikan_karyawan'),
-    //         'jurusan_pendidikan' => $this->request->getVar('jurusan_pendidikan'),
-    //         'jabatan_karyawan' => $this->request->getVar('jabatan_karyawan'),
-    //         'devisi_karyawan' => $this->request->getVar('devisi_karyawan'),
-    //         'status_karyawan' => $this->request->getVar('status_karyawan'),
-    //         'nomor_telp' => $this->request->getVar('nomor_telp'),
-    //         'tanggal_masuk' => $this->request->getVar('tanggal_masuk'),
-    //         'badan_usaha' => $this->request->getVar('badan_usaha'),
-    //     ];
-    //     $this->db->table('karyawan')->where(['id_tetap' => $id])->update($data);
-    //     return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Update');
+    //     $data = $this->request->getPost();
+
+    //     if (!empty($data)) {
+    //         unset($data['_method']);
+
+    //         $status_karyawan = (isset($data['status_karyawan'])) ? $data['status_karyawan'] : null;
+
+    //         if (!is_null($status_karyawan)) {
+    //             $this->db->table('karyawankontrak')
+    //                 ->set($data)
+    //                 ->where(['id_kontrak' => $id])
+    //                 ->update();
+
+    //             return redirect()->to(site_url('kontrak'))->with('success', 'Data Berhasil Update');
+    //         } else {
+    //             // handle the case where status_karyawan is missing or invalid
+    //         }
+    //     } else {
+    //         // handle the case where POST data is empty
+    //     }
     // }
+    //versi3
+    // function updatekontrak($id)
+    // {
+    //     // Ambil data dari permintaan POST dan hapus kunci yang tidak diperlukan
+    //     $data = $this->request->getPost();
+    //     unset($data['_method']);
+
+    //     // Bersihkan nilai-nilai yang akan disimpan pada database
+    //     $awal_kontrak = filter_var($data['kontrak_awal'], FILTER_SANITIZE_STRING);
+    //     $akhir_kontrak = filter_var($data['kontrak_akhir'], FILTER_SANITIZE_STRING);
+    //     // $renew = filter_var($data['renew'], FILTER_SANITIZE_NUMBER_INT);
+    //     // $status = filter_var($data['status'], FILTER_SANITIZE_STRING);
+
+    //     // Periksa apakah value kontrak awal dan kontrak akhir kosong
+    //     if (empty($awal_kontrak) || empty($akhir_kontrak)) {
+    //         redirect_back_with_error("Tanggal kontrak awal dan akhir harus diisi.");
+    //     }
+
+    //     // Inisialisasi objek koneksi database atau ambil dari instance yang ada
+    //     $query = $this->db->table('karyawankontrak');
+
+    //     // Simpan nilai-nilai yang telah dibersihkan ke dalam database
+    //     $result = $query->where('id', $id)->update([
+    //         'awal_kontrak' => $awal_kontrak,
+    //         'akhir_kontrak' => $akhir_kontrak,
+    //         //     'renew' => $renew,
+    //         //     'status' => $status
+    //     ]);
+
+    //     // Lakukan penanganan kesalahan jika proses update gagal
+    //     if (!$result) {
+    //         redirect_back_with_error("Gagal melakukan update data.");
+    //     }
+
+    //     // Redirect ke halaman sebelumnya dengan pesan sukses jika update berhasil
+    //     redirect_back_with_success("Data kontrak berhasil diperbarui.");
+    // }
+
 
     // public function delete($id)
     // {

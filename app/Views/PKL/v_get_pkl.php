@@ -52,7 +52,10 @@
                                 <tbody>
                                     <?php
                                     foreach ($pkl as $no => $value) {
-                                        if (strtotime($value->berakhir) < time()) {
+                                        $contract_start_date = date_create($value->mulai);
+                                        $contract_end_date = date_create($value->berakhir);
+                                        $current_date = date_create();
+                                        if ($contract_end_date < $contract_start_date || $contract_end_date < $current_date) {
                                             $value->status = 'End';
                                         } else {
                                             $value->status = 'Ongoing';
@@ -60,7 +63,8 @@
                                         $date = date("Y-m-d");
                                         $timeStart = strtotime("$value->mulai");
                                         $timeEnd = strtotime("$value->berakhir");
-                                        $value->durasi = date("m", $timeEnd) - date("m", $timeStart);
+                                        $diff = abs((date("Y", $timeEnd) - date("Y", $timeStart)) * 12 + (date("m", $timeEnd) - date("m", $timeStart)));
+                                        $value->durasi = $diff;
                                     ?>
                                         <tr align="center">
 
@@ -71,7 +75,7 @@
                                             <td><?= $value->departemen; ?></td>
                                             <td><?= $value->mulai; ?></td>
                                             <td><?= $value->berakhir; ?></td>
-                                            <td><?= $value->durasi, "Bulan"; ?></td>
+                                            <td><?= $value->durasi, " Bulan"; ?></td>
                                             <?php if (($value->status) === "End") { ?>
                                                 <td>
                                                     <div class="badge badge-success"><?= $value->status; ?></div>

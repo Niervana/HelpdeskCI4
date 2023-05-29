@@ -42,6 +42,7 @@ function returnLogout() {
     $(location).attr('href', link)
 }
 
+
 // function summernote(){
 // $(document).ready(function() {
 //   $('#summernote').summernote();

@@ -56,6 +56,7 @@ $('[data-confirm]').each(function() {
 // Global
 $(function() {
   let sidebar_nicescroll_opts = {
+    cursorcolor: "#93a9b5",
     cursoropacitymin: 0,
     cursoropacitymax: .8,
     zindex: 892
