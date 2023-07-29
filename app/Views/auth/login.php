@@ -21,14 +21,30 @@ use App\Controllers\Auth;
 
     <style>
         body {
-            overflow-y: hidden;
+            /* overflow-y: hidden; */
+            /* If unnecessary, remove this line */
+            background: linear-gradient(180deg, #ffffff 0%, #2e78ff 100%);
+
+            background-size: cover;
+            animation: bg-pan-top 8s both;
+        }
+
+        @keyframes bg-pan-top {
+            0% {
+                background-position: 50% 100%;
+            }
+
+            100% {
+                background-position: 50% 0%;
+            }
         }
     </style>
+
 </head>
 
 <body>
-    <div id="app">
-        <section class="section">
+    <div id="app" class="noselect">
+        <section class=" section">
             <div class="container">
                 <div class="row">
                     <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
@@ -65,14 +81,15 @@ use App\Controllers\Auth;
                                         <div class="d-block">
                                             <label for="password" class="control-label">Password</label>
                                             <div class="float-right">
-                                                <a href="forgot" class="text-small">
-                                                    Hilap Password?
-                                                </a>
+                                                <a href="forgot" class="text-small">Hilap Password?</a>
                                             </div>
                                         </div>
-                                        <input id="password" type="password" class="form-control" name="password" tabindex="2" required>
+                                        <div class="input-group">
+                                            <input id="password" type="password" class="form-control" name="password" tabindex="2" required>
+                                            <span class="input-group-text" onclick="togglePassword()"><i id="password-toggle" class="fa fa-eye"></i></span>
+                                        </div>
                                         <div class="invalid-feedback">
-                                            please eusi in your password
+                                            Tolong isi password Anda.
                                         </div>
                                     </div>
 
@@ -88,11 +105,11 @@ use App\Controllers\Auth;
                                             Login
                                         </button>
                                     </div>
+                                    <div class=" text-muted text-center">
+                                        Don't have an account? <a href="register">Create One</a>
+                                    </div>
                                 </form>
                             </div>
-                        </div>
-                        <div class=" text-muted text-center">
-                            Don't have an account? <a href="register">Create One</a>
                         </div>
                     </div>
                 </div>
@@ -122,6 +139,21 @@ use App\Controllers\Auth;
             usernameInput.value = localStorage.getItem('email');
             passwordInput.value = localStorage.getItem('password');
             rememberMeCheckbox.checked = true;
+        }
+
+        function togglePassword() {
+            var passwordField = document.getElementById("password");
+            var passwordToggle = document.getElementById("password-toggle");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                passwordToggle.classList.remove("fa-eye");
+                passwordToggle.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                passwordToggle.classList.remove("fa-eye-slash");
+                passwordToggle.classList.add("fa-eye");
+            }
         }
     </script>
     <!-- General JS Scripts -->

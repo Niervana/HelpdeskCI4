@@ -11,18 +11,34 @@
     <div class="section-header">
         <h6>Total Data PKL : <?php echo $total_rows; ?></h6>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href=" <?php echo site_url('pkl/add') ?>"><span class="btn btn-success"><i class="fa-solid fa-user-plus"></i> &ensp;<span>Tambah Data</span></span></a></div>
+            <form class="breadcrumb-item" method=" post" action="<?= base_url('pkl/import') ?>" enctype="multipart/form-data">
+                <input type="file" name="csv_file" accept=".csv">
+                <button class="breadcrumb-item btn btn-primary btn-sm" type="submit">Import CSV</button>&ensp;
+            </form>
+            <div class="breadcrumb-item"><a href=" <?php echo site_url('pkl/add') ?>"><span class="btn btn-success"><i class="fa-solid fa-user-plus"></i>&ensp;<span>Tambah Data</span></span></a></div>
         </div>
-    </div>
 
-    <?php if (session()->getFlashdata('success')) : ?>
-        <div class="alert alert-success alert-dismissible show fade">
-            <div class="alert-body">
-                <button class="close" data-dismiss="alert">x</button>
-                <b>Success!</b>
-                <?= session()->getFlashdata('success') ?>
-            </div>
-        </div>
+        <?php if (session()->getFlashdata('success')) : ?>
+            <script>
+                iziToast.success({
+                    title: 'Sukses',
+                    message: '<?= session()->getFlashdata('success') ?>',
+                    position: 'topCenter',
+                    color: 'white',
+                    backgroundColor: '#fff'
+                });
+            </script>
+        <?php endif; ?>
+    </div><?php if (session()->getFlashdata('error')) : ?>
+        <script>
+            iziToast.error({
+                title: 'Error',
+                message: '<?= session()->getFlashdata('error') ?>',
+                position: 'topCenter',
+                color: 'red',
+                backgroundColor: '#fff'
+            });
+        </script>
     <?php endif; ?>
     <div class="section-body">
         <!-- awal -->
@@ -85,18 +101,44 @@
                                                     <div class="badge badge-primary"><?= $value->status; ?></div>
                                                 </td>
                                             <?php } ?>
-                                            <td width="10%"><a href="<?php echo site_url('pkl/edit/' . $value->id_pkl); ?>" class="btn btn-success btn-circle btn-sm fas fa-user-pen"></i></a>
-                                                <form action="<?= site_url('pkl' . $value->id_pkl) ?>" method="post" class="d-inline" onsubmit="return confirm('Ingin Hapus Data?')">
-                                                    <?= csrf_field() ?>
-                                                    <input type="hidden" name="_method" value="DELETE">
-                                                    <button class="btn btn-danger btn-sm"><i class="fas fa-user-minus"></i></button>
+                                            <td width="10%">
+                                                <a href="<?php echo site_url('pkl/edit/' . $value->id_pkl); ?>" class="btn btn-success btn-circle btn-sm fas fa-user-pen"></i></a>
+                                                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalHapus_<?php echo $value->id_pkl; ?>"><i class="fas fa-user-minus"></i></button>
                                                 </form>
+                                                <a href="<?php echo site_url('pkl/sertifikat/' . $value->id_pkl); ?>" class="btn btn-danger btn-circle btn-sm fas fa-file-pdf"></i></a>
                                             </td>
                                         </tr>
                                     <?php $no++;
                                     } ?>
                                 </tbody>
                             </table>
+                            <?php if (isset($value) && !empty($value)) : ?>
+                                <?php foreach ($pkl as $value) : ?>
+                                    <div class="modal fade" tabindex="-1" role="dialog" id="modalHapus_<?php echo $value->id_pkl; ?>" data-backdrop="false">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Konfirmasi Hapus Data</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Apakah Anda yakin ingin menghapus anak magang ini?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <form action="<?= site_url('pkl' . $value->id_pkl) ?>" method="post" class="d-inline">
+                                                        <?= csrf_field() ?>
+                                                        <input type="hidden" name="_method" value="DELETE">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                        <button type="submit" class="btn btn-primary">Hapus</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

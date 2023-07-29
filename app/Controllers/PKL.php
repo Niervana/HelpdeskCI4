@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\PraktikModel;
+use Dompdf\Dompdf;
 
 class PKL extends BaseController
 {
@@ -37,51 +38,87 @@ class PKL extends BaseController
             return redirect()->to(site_url('pkl'))->with('success', 'Data Berhasil Dibuat');
         }
     }
-    // ini fungsi untuk nge route ke view editkaryawan
-    // public function edit($id = null)
-    // {
-    //     if ($id != null) {
-    //         $query = $this->db->table('karyawan')->getWhere(['id_tetap' => $id]);
-    //         if ($query->resultID->num_rows > 0) {
-    //             $data['karyawan'] = $query->getRow();
-    //             return view('karyawan/v_editkaryawan', $data);
-    //         } else {
-    //             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-    //         }
-    //     } else {
-    //         throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-    //     }
-    // }
-    // ini fungsi untuk edit data dari view edit karyawan
-    // public function update($id)
-    // {
-    //     // $data = $this->request->getPost();
-    //     // unset($data['_method']);
-    //     $data = [
-    //         'id_karyawan' => $this->request->getVar('id_karyawan'),
-    //         'nik_karyawan' => $this->request->getVar('nik_karyawan'),
-    //         'nama_karyawan' => $this->request->getVar('nama_karyawan'),
-    //         'gender_karyawan' => $this->request->getVar('gender_karyawan'),
-    //         'tgl_lahir' => $this->request->getVar('tgl_lahir'),
-    //         'tmpt_lahir' => $this->request->getVar('tmpt_lahir'),
-    //         'alamat_karyawan' => $this->request->getVar('alamat_karyawan'),
-    //         'email_karyawan' => $this->request->getVar('email_karyawan'),
-    //         'pendidikan_karyawan' => $this->request->getVar('pendidikan_karyawan'),
-    //         'jurusan_pendidikan' => $this->request->getVar('jurusan_pendidikan'),
-    //         'jabatan_karyawan' => $this->request->getVar('jabatan_karyawan'),
-    //         'devisi_karyawan' => $this->request->getVar('devisi_karyawan'),
-    //         'status_karyawan' => $this->request->getVar('status_karyawan'),
-    //         'nomor_telp' => $this->request->getVar('nomor_telp'),
-    //         'tanggal_masuk' => $this->request->getVar('tanggal_masuk'),
-    //         'badan_usaha' => $this->request->getVar('badan_usaha'),
-    //     ];
-    //     $this->db->table('karyawan')->where(['id_tetap' => $id])->update($data);
-    //     return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Update');
-    // }
-
+    public function edit($id = null)
+    {
+        if ($id != null) {
+            $query = $this->db->table('pkl')->getWhere(['id_pkl' => $id]);
+            if ($query->resultID->num_rows > 0) {
+                $data['pkl'] = $query->getRow();
+                return view('pkl/v_editpkl', $data);
+            } else {
+                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            }
+        } else {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+    }
+    public function update($id)
+    {
+        $data = [
+            'nisnim' => $this->request->getVar('nisnim'),
+            'nama' => $this->request->getVar('nama'),
+            'tl' => $this->request->getVar('tl'),
+            'tgl' => $this->request->getVar('tgl'),
+            'sekolah' => $this->request->getVar('sekolah'),
+            'jurusan' => $this->request->getVar('jurusan'),
+            'departemen' => $this->request->getVar('departemen'),
+            'mulai' => $this->request->getVar('mulai'),
+            'berakhir' => $this->request->getVar('berakhir'),
+            'sertifikat' => $this->request->getVar('sertifikat')
+        ];
+        $this->db->table('pkl')->where('id_pkl', $id)->update($data);
+        return redirect()->to(site_url('pkl'))->with('success', 'Data Berhasil Update');
+    }
     public function delete($id)
     {
         $this->db->table('pkl')->where(['id_pkl' => $id])->delete();
         return redirect()->to(site_url('pkl'))->with('success', 'Data Berhasil Dihapus');
+    }
+    public function import_csv()
+    {
+        $file = $this->request->getFile('csv_file');
+
+        if ($file && $file->isValid() && $file->getExtension() === 'csv') {
+            $csvData = array_map('str_getcsv', file($file->getTempName()));
+
+            // Hapus header kolom
+            $header = array_shift($csvData);
+
+            // Import data ke database
+            foreach ($csvData as $row) {
+                $data = array_combine($header, $row);
+                // Lakukan pemrosesan dan simpan data ke database
+                // Contoh:
+                $this->Model->insert($data);
+            }
+
+            // Redirect atau tampilkan pesan sukses
+            return redirect()->to('halaman_sukses');
+        } else {
+            // Tampilkan pesan error jika format file tidak sesuai
+            return redirect()->back()->with('error', 'Format file tidak valid. Mohon unggah file CSV.');
+        }
+    }
+    public function sertifikat($id)
+    {
+        if ($id != null) {
+            $query = $this->db->table('pkl')->getWhere(['id_pkl' => $id]);
+            if ($query->resultID->num_rows > 0) {
+                $data['pkl'] = $query->getRow();
+                $html = view('pkl/pdf', $data);
+                $dompdf = new \Dompdf\Dompdf();
+                $dompdf->set_option('isRemoteEnabled', TRUE);
+                $dompdf->loadHtml($html);
+                $dompdf->setPaper('A4', 'landscape');
+                $dompdf->render();
+                $dompdf->stream("sertifikat.pdf", array("Attachment" => false));
+                exit();
+                // return view('pkl/pdf', $data);
+            } else {
+                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            }
+        } else {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
     }
 }

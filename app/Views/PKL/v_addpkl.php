@@ -110,12 +110,18 @@
                                       <label class="form-check-inline">Berakhir*</label>
                                       <input type="date" name="berakhir" class="form-control form-check-inline" required>
                                   </div>
+                                  <div class="form-group">
+                                      <label class="form-check-inline">No.Sertifikat</label>
+                                      <input type="text" name="sertifikat" class="form-control form-check-inline" required>
+                                  </div>
                                   <button type="submit" class="btn btn-success">Save <i class="fas fa-floppy-disk"></i></button>
                                   <button type="reset" class="btn btn-secondary">Reset <i class="fas fa-arrows-rotate"></i></button>
                               </div>
                               </form>
                           </div>
                       </div>
+                  </div>
+              </div>
           </section>
       </div>
       <!-- akhir -->

@@ -1,30 +1,41 @@
-<!-- <li class="menu-header">Dashboard</li> -->
-<!-- <li class="nav-item">
-    <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
-    <ul class="dropdown-menu">
-        <li><a class="nav-link" href="#">Dashboard 1</a></li>
-        <li><a class="nav-link" href="#">Dashboard 2</a></li>
-    </ul>
-</li> -->
 <li class="menu-header">HRM</li>
+<li class="nav-item">
+    <a href="<?= base_url('forgetfp'); ?>" class="nav-link"><i class="far fa-clipboard-user fa-beat"></i> <span>Fingerprint Access</span></a>
+</li>
 <li class="nav-item dropdown">
-    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="far fa-clipboard-user fa-beat"></i> <span>Absensi</span></a>
+    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="far fa-business-time fa-bounce"></i> <span>TimeSheet</span></a>
     <ul class="dropdown-menu">
-        <li><a class="nav-link" href="<?= base_url('absenstaff'); ?>">Staff</a></li>
-        <li><a class="nav-link" href="<?= base_url('absenoperator'); ?>">Operator</a></li>
-        <li><a class="nav-link" href="<?= base_url('userdatafingerprint'); ?>">Userdata</a></li>
+        <li><a class="nav-link" href="<?= base_url('attendance'); ?>">Attendance</a></li>
+        <li><a class="nav-link" href="<?= base_url('officeshift'); ?>">Config Sift</a></li>
+        <li><a class="nav-link" href="<?= base_url(''); ?>">Config Libur</a></li>
+        <li><a class="nav-link" href="<?= base_url(''); ?>">Request Cuti</a></li>
+    </ul>
+</li>
+<li class="nav-item dropdown">
+    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="far fa-file-spreadsheet"></i> <span>Report</span></a>
+    <ul class="dropdown-menu">
+        <li><a class="nav-link" href="<?= base_url(''); ?>">Daily</a></li>
+        <li><a class="nav-link" href="<?= base_url(''); ?>">Mountly</a></li>
+        <li><a class="nav-link" href="<?= base_url(''); ?>">Date Wish</a></li>
     </ul>
 </li>
 <li class="nav-item dropdown">
     <a href="#" class="nav-link has-dropdown"><i class="fas fa-people-group"></i> <span>Human Resource</span></a>
     <ul class="dropdown-menu">
-        <li><a class="nav-link" href="<?= base_url('karyawan'); ?>">Data Karyawan</a></li>
-        <li><a class="nav-link" href="<?= base_url('kontrak'); ?>">Kontrak Aktif</a></li>
-        <li><a class="nav-link" href="<?= base_url('pkl'); ?>">Pelatihan Kerja Lapangan</a></li>
+        <li><a class="nav-link" href="<?= base_url('karyawan'); ?>">Datalist Karyawan</a></li>
+        <li><a class="nav-link" href="<?= base_url('kontrak'); ?>">Datalist Kontrak</a></li>
     </ul>
 </li>
 <li class="nav-item dropdown">
-    <a href="#" class="nav-link has-dropdown"><i class="fas fa-duotone fa-envelope-open-text"></i> <span>Surat</span></a>
+    <a href="#" class="nav-link has-dropdown"><i class="fas fa-users"></i> <span>Magang</span></a>
+    <ul class="dropdown-menu">
+        <li><a class="nav-link" href="<?= base_url('pkl'); ?>">Datalist Magang</a></li>
+        <li><a class="nav-link" href="<?= base_url(''); ?>">Penilaian</a></li>
+
+    </ul>
+</li>
+<li class="nav-item dropdown">
+    <a href="#" class="nav-link has-dropdown"><i class="fas fa-duotone fa-envelope-open-text"></i> <span>Sertifikat</span></a>
     <ul class="dropdown-menu">
         <li><a class="nav-link" href="<?= base_url(''); ?>">Menu 1</a></li>
         <li><a class="nav-link" href="<?= base_url(''); ?>">Menu 2</a></li>
@@ -38,7 +49,7 @@
     <a href="#" class="nav-link has-dropdown"><i class="fas fa-money-check-dollar"></i> <span>Finance</span></a>
     <ul class="dropdown-menu">
         <li><a class="nav-link" href="<?= base_url(''); ?>">Menu 1</a></li>
-        <li><a class="nav-link beep beep-sidebar" href="<?= base_url(''); ?>l">Menu 2</a></li>
+        <li><a class="nav-link beep beep-sidebar" href="<?= base_url(''); ?>">Menu 2</a></li>
         <li><a class="nav-link" href="<?= base_url(''); ?>">Menu 3</a></li>
     </ul>
 </li>
@@ -46,7 +57,7 @@
     <a href="#" class="nav-link has-dropdown"><i class="fas fa-calculator"></i> <span>Payroll</span></a>
     <ul class="dropdown-menu">
         <li><a class="nav-link" href="<?= base_url(''); ?>">Menu 1</a></li>
-        <li><a class="nav-link beep beep-sidebar" href="<?= base_url(''); ?>l">Menu 2</a></li>
+        <li><a class="nav-link beep beep-sidebar" href="<?= base_url(''); ?>">Menu 2</a></li>
         <li><a class="nav-link" href="<?= base_url(''); ?>">Menu 3</a></li>
     </ul>
 </li>

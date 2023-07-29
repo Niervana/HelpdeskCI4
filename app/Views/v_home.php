@@ -3,13 +3,17 @@
 <title>Dashboard &mdash; Nirvana</title>
 <?= $this->endSection() ?>
 <?= $this->section('CSS') ?>
+<!-- Chart.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<!-- fullcalendar.js -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1/index.global.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js'></script>
+
+
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <section class="section">
-    <div class="section-header">
-        <h1>Dashboard Human Resource Development</h1>
-    </div>
+
     <div class="row">
         <div class="col-lg-3 col-md-6 col-sm-6 col-12">
             <div class="card card-statistic-1">
@@ -96,7 +100,7 @@
                         <h4>Present</h4>
                     </div>
                     <div class="card-body">
-                        42
+                        -
                     </div>
                 </div>
             </div>
@@ -111,7 +115,7 @@
                         <h4>Late</h4>
                     </div>
                     <div class="card-body">
-                        1,201
+                        -
                     </div>
                 </div>
             </div>
@@ -126,89 +130,68 @@
                         <h4>Unpresent</h4>
                     </div>
                     <div class="card-body">
-                        47
+                        -
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-6 col-sm-6 col-lg-6">
+        <div class="col-lg-4">
             <div class="card">
                 <div class="card-header">
-                    <h4>Summary</h4>
-                    <div class="card-header-action">
-                        <a href="#summary-chart" data-tab="summary-tab" class="btn active">Chart</a>
-                        <a href="#summary-text" data-tab="summary-tab" class="btn">Text</a>
-                    </div>
+                    <h4>Badan Usaha</h4>
                 </div>
                 <div class="card-body">
-                    <div class="summary">
-                        <div class="summary-info" data-tab-group="summary-tab" id="summary-text">
-                            <h4>$1,858</h4>
-                            <div class="text-muted">Sold 4 items on 2 customers</div>
-                            <div class="d-block mt-2">
-                                <a href="#">View All</a>
-                            </div>
-                        </div>
-                        <div class="summary-chart active" data-tab-group="summary-tab" id="summary-chart">
-                            <canvas id="myChart" height="180"></canvas>
-                        </div>
-                        <div class="summary-item">
-                            <h6 class="mt-3">Statistic <span class="text-muted">Karyawan Hadir</span></h6>
-                            <ul class="list-unstyled list-unstyled-border">
-                                <li class="media">
-                                    <div class="media-body">
-                                        <div class="media-right">12%</div>
-                                        <div class="media-title"><a href="#">Hari ini</a></div>
-                                    </div>
-                                </li>
-                                <li class="media">
-                                    <div class="media-body">
-                                        <div class="media-right">41%</div>
-                                        <div class="media-title"><a href="#">Minggu ini</a></div>
-                                    </div>
-                                </li>
-                                <li class="media">
-                                    <div class="media-body">
-                                        <div class="media-right">41%</div>
-                                        <div class="media-title"><a href="#">Bulan ini</a></div>
-                                    </div>
-                                </li>
-                            </ul>
+                    <canvas id="grafik-badanusaha"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Incoming Libur Nasional</h4>
+                </div>
+                <div class="card-body mt-3 pt-1">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table id="table-libur">
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Perihal</th>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-sm-6 col-lg-6">
+        <div class="col-lg-8">
             <div class="card">
                 <div class="card-header">
-                    <h4>Chart Departemen</h4>
+                    <h4>Calendar</h4>
                 </div>
-                <div class="card-body">
-                    <canvas id="grafik-karyawan"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-6 col-sm-6 col-lg-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Log Activity</h4>
-                </div>
-                <div class="card-body">
-
+                <div class="card-body mb-3">
+                    <div id="calendar"></div>
                 </div>
             </div>
         </div>
     </div>
 
+
+    <div class="col-12 col-sm-12 col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Departemen</h4>
+            </div>
+            <div class="card-body">
+                <canvas id="grafik-karyawan"></canvas>
+            </div>
+        </div>
+    </div>
+
+
 </section>
 <?= $this->endSection() ?>
-
 <?= $this->section('script') ?>
-
 <script>
     function showDateTime() {
         const now = new Date();
@@ -268,4 +251,162 @@
         }
     });
 </script>
+<script>
+    var ctx = document.getElementById('grafik-badanusaha').getContext('2d');
+    var data_karyawan = <?php echo json_encode($badanusaha); ?>;
+
+    var labels = [];
+    var data = [];
+
+    for (var i = 0; i < data_karyawan.length; i++) {
+        labels.push(data_karyawan[i]['badan_usaha']);
+        data.push(data_karyawan[i]['jumlah']);
+    }
+    var dynamicColors = function() {
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    };
+
+    var backgroundColors = [];
+    for (var i = 0; i < data_karyawan.length; i++) {
+        backgroundColors.push(dynamicColors());
+    }
+    var chart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Jumlah Karyawan',
+                data: data,
+                backgroundColor: backgroundColors,
+                borderColor: backgroundColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            legend: {
+                position: 'right'
+            }
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            selectable: true,
+            editable: true, // Mengaktifkan fitur drag and drop
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            dateClick: function(info) {
+                var currentTime = moment().format('HH:mm'); // Ambil waktu saat ini
+                var isAllDay = moment().diff(info.date, 'days') > 0; // Cek apakah tanggal yang diklik adalah all-day event
+                var timeLabel = isAllDay ? '(All Day)' : '(Waktu saat ini: ' + currentTime + ')'; // Tampilkan label sesuai dengan jenis event
+
+                var title = prompt('Kegiatan ' + timeLabel + ':');
+                if (title) {
+                    var eventData = {
+                        title: title,
+                        start: info.date
+                    };
+
+                    if (!isAllDay) {
+                        eventData.allDay = false;
+                        eventData.start.setHours(moment().hours()); // Set jam ke waktu saat ini
+                        eventData.start.setMinutes(moment().minutes()); // Set menit ke waktu saat ini
+                    }
+
+                    calendar.addEvent(eventData);
+                    saveEventsToLocalStorage();
+                }
+            },
+            eventClick: function(info) {
+                if (confirm('Anda yakin ingin menghapus kegiatan ini?')) {
+                    info.event.remove();
+                    saveEventsToLocalStorage();
+                }
+            },
+            eventDrop: function(info) { // Menghandle perubahan saat elemen di-drop ke tanggal lain
+                saveEventsToLocalStorage();
+            },
+            eventDidMount: function(info) {
+                addRedBackgroundToWeekend(info.el, info.event.start);
+            },
+            events: getEventsFromLocalStorage()
+        });
+
+        calendar.render();
+
+        function addRedBackgroundToWeekend(element, date) {
+            if (date.getDay() === 0 || date.getDay() === 6) {
+                element.classList.add('weekend');
+            }
+        }
+
+        function saveEventsToLocalStorage() {
+            var events = calendar.getEvents().map(function(event) {
+                return {
+                    title: event.title,
+                    start: event.start.toISOString()
+                };
+            });
+
+            localStorage.setItem('calendarEvents', JSON.stringify(events));
+        }
+
+        function getEventsFromLocalStorage() {
+            var events = JSON.parse(localStorage.getItem('calendarEvents')) || [];
+
+            events.forEach(function(event) {
+                event.start = new Date(event.start);
+            });
+
+            return events;
+        }
+    });
+</script>
+
+<script>
+    fetch('https://raw.githubusercontent.com/guangrei/APIHariLibur_V2/main/calendar.json')
+        .then(response => response.json())
+        .then(data => {
+            const liburNasional = data;
+
+            const tableLibur = document.getElementById('table-libur');
+            const currentDate = new Date();
+
+            let rowCount = 0;
+            Object.keys(liburNasional).forEach(date => {
+                if (rowCount >= 10) {
+                    return;
+                }
+
+                const liburDate = new Date(date);
+                if (liburDate < currentDate) {
+                    return;
+                }
+
+                const libur = liburNasional[date];
+                const row = tableLibur.insertRow();
+                const tanggalCell = row.insertCell();
+                const keteranganCell = row.insertCell();
+
+                tanggalCell.innerText = date;
+                keteranganCell.innerText = libur.summary[0];
+
+                rowCount++;
+            });
+        })
+        .catch(error => {
+            console.log('Terjadi kesalahan:', error);
+        });
+</script>
+
 <?= $this->endSection() ?>

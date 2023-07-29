@@ -11,13 +11,15 @@
         <h6>Total Data Karyawan Kontrak : <?php echo $total_rows; ?></h6>
     </div>
     <?php if (session()->getFlashdata('success')) : ?>
-        <div class="alert alert-success alert-dismissible show fade">
-            <div class="alert-body">
-                <button class="close" data-dismiss="alert">x</button>
-                <b>Success!</b>
-                <?= session()->getFlashdata('success') ?>
-            </div>
-        </div>
+        <script>
+            iziToast.success({
+                title: 'Sukses',
+                message: '<?= session()->getFlashdata('success') ?>',
+                position: 'topCenter',
+                color: 'white',
+                backgroundColor: '#fff'
+            });
+        </script>
     <?php endif; ?>
     <div class="section-body">
         <!-- awal -->

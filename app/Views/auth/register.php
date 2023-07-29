@@ -33,7 +33,22 @@ use App\Controllers\Auth;
     <!-- /END GA -->
     <style>
         body {
-            overflow-y: hidden;
+            /* overflow-y: hidden; */
+            /* If unnecessary, remove this line */
+            background: linear-gradient(180deg, #ffffff 0%, #2e78ff 100%);
+
+            background-size: cover;
+            animation: bg-pan-top 8s both;
+        }
+
+        @keyframes bg-pan-top {
+            0% {
+                background-position: 50% 100%;
+            }
+
+            100% {
+                background-position: 50% 0%;
+            }
         }
     </style>
 </head>
@@ -51,34 +66,29 @@ use App\Controllers\Auth;
                             </a>
                         </div>
                         <div class="card card-primary">
-                            <!-- <div class="card-header">
-                            
-                            </div> -->
 
                             <div class="card-body">
-                                <form method="POST">
+                                <form action="<?= site_url('register') ?>" method="post" autocomplete="off" onsubmit="return validatePassword();">
+                                    <?= csrf_field() ?>
                                     <div class="row">
                                         <div class="form-group col-6">
-                                            <label for="frist_name">ID Karyawan</label>
-                                            <input id="frist_name" type="text" class="form-control" name="frist_name" autofocus>
+                                            <label>ID Karyawan</label>
+                                            <input type="text" class="form-control" name="id_karyawan">
                                         </div>
                                         <div class="form-group col-6">
-                                            <label for="last_name">Nama</label>
-                                            <input id="last_name" type="text" class="form-control" name="last_name">
+                                            <label>Nama</label>
+                                            <input type="text" class="form-control" name="nama_users">
+                                            <input type="hidden" class="form-control" name="role" value="2">
                                         </div>
                                     </div>
-
                                     <div class="form-group">
-                                        <label for="email">Email</label>
-                                        <input id="email" type="email" class="form-control" name="email">
-                                        <div class="invalid-feedback">
-                                        </div>
+                                        <label>Email</label>
+                                        <input type="email" class="form-control" name="email_users">
                                     </div>
-
                                     <div class="row">
                                         <div class="form-group col-6">
                                             <label for="password" class="d-block">Password</label>
-                                            <input id="password" type="password" class="form-control pwstrength" data-indicator="pwindicator" name="password">
+                                            <input id="password" type="password" class="form-control pwstrength" data-indicator="pwindicator" name="password_users">
                                             <div id="pwindicator" class="pwindicator">
                                                 <div class="bar"></div>
                                                 <div class="label"></div>
@@ -86,23 +96,22 @@ use App\Controllers\Auth;
                                         </div>
                                         <div class="form-group col-6">
                                             <label for="password2" class="d-block">Password Confirmation</label>
-                                            <input id="password2" type="password" class="form-control" name="password-confirm">
+                                            <input id="password2" type="password" class="form-control">
+                                            <input type="hidden" name="createdat_users" value="<?php echo date('Y-m-d H:i:s'); ?>">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" name="agree" class="custom-control-input" id="agree">
+                                            <input type="checkbox" class="custom-control-input" id="agree">
                                             <label class="custom-control-label" for="agree">I agree with the terms and conditions</label>
                                         </div>
                                     </div>
-                                </form>
-                                <div class="form-group">
-                                    <a href="<?= base_url('prank'); ?>"><button type="submit" class="btn btn-primary btn-lg btn-block">
+                                    <div class="form-group">
+                                        <button type="submit" id="registerButton" disabled class="btn btn-primary btn-lg btn-block">
                                             Register
                                         </button>
-
-                                </div>
-
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -110,16 +119,70 @@ use App\Controllers\Auth;
         </section>
     </div>
 
-    <!-- General JS Scripts -->
-    <script src="<?= base_url() ?>/template/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="<?= base_url() ?>/template/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="<?= base_url() ?>/template/node_modules/jquery.nicescroll/dist/jquery.nicescroll.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
-    <script src="<?= base_url() ?>/template/assets/modules/moment.min.js"></script>
-    <!-- Template JS File -->
-    <script src="<?= base_url() ?>/template/assets/js/scripts.js"></script>
-    <script src="<?= base_url() ?>/template/assets/js/custom.js"></script>
-    <script src="<?= base_url() ?>/template/assets/js/stisla.js"></script>
+    <script src="<?= base_url() ?>/template/node_modules/moment/min/moment.min.js"></script>
+    <script>
+        const passwordInput = document.getElementById('password');
+        const passwordIndicator = document.getElementById('pwindicator');
+        const passwordLabel = passwordIndicator.querySelector('.label');
+        const passwordBar = passwordIndicator.querySelector('.bar');
+
+        function getPasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) {
+                strength += 1;
+            }
+            if (/\d/.test(password)) {
+                strength += 1;
+            }
+            if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(password)) {
+                strength += 1;
+            }
+            return strength;
+        }
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strength = getPasswordStrength(password);
+            switch (strength) {
+                case 0:
+                    passwordLabel.textContent = 'Very Weak';
+                    passwordBar.style.width = '10%';
+                    passwordBar.style.backgroundColor = '#ff4d4d';
+                    break;
+                case 1:
+                    passwordLabel.textContent = 'Weak';
+                    passwordBar.style.width = '30%';
+                    passwordBar.style.backgroundColor = '#ff4d4d';
+                    break;
+                case 2:
+                    passwordLabel.textContent = 'Medium';
+                    passwordBar.style.width = '50%';
+                    passwordBar.style.backgroundColor = '#ffc107';
+                    break;
+                case 3:
+                    passwordLabel.textContent = 'Strong';
+                    passwordBar.style.width = '100%';
+                    passwordBar.style.backgroundColor = '#28a745';
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        function validatePassword() {
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("password2").value;
+            if (password != confirmPassword) {
+                alert("Password confirmation does not match.");
+                return false;
+            }
+            return true;
+        }
+        var agreeCheckbox = document.getElementById("agree");
+        var registerButton = document.getElementById("registerButton");
+        agreeCheckbox.addEventListener("change", function() {
+            registerButton.disabled = !agreeCheckbox.checked;
+        });
+    </script>
 </body>
 
 </html>

@@ -33,6 +33,7 @@ class Karyawan extends BaseController
     public function insert()
     {
         $data = $this->request->getPost();
+        // $salary = str_replace(',', '', $data['salary']);
         $status_karyawan = $data['status_karyawan'];
         $this->db->table('karyawan')->insert($data);
         if ($status_karyawan === 'Kontrak') {
@@ -44,8 +45,11 @@ class Karyawan extends BaseController
         }
         if ($this->db->affectedRows() > 0) {
             return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Dibuat');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Data gagal disimpan.');
         }
     }
+
     // ini fungsi untuk nge route ke view editkaryawan
     public function edit($id = null)
     {
@@ -61,93 +65,85 @@ class Karyawan extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
     }
-    //versi 1
-    // ini fungsi untuk edit data dari view edit karyawan
-    // public function update($id)
-    // {
-    //     $data = $this->request->getPost();
-    //     unset($data['_method']);
-    //     $status_karyawan = $data['status_karyawan'];
-    //     $this->db->table('karyawan')->where(['id_tetap' => $id])->update($data);
-    //     if ($status_karyawan === 'Tetap') {
-    //         $this->db->table('karyawankontrak')->where('id_tetap', $id)->delete();
-    //     }
-    //     if ($this->db->affectedRows() > 0) {
-    //         return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Diperbarui');
-    //     }
-    // }
-    // versi 2
-    // public function update($id)
-    // {
-    //     $data = $this->request->getPost();
-    //     unset($data['_method']);
-    //     // Periksa apakah data yang diperlukan ada
-    //     if (!isset($data['status_karyawan'])) {
-    //         return redirect()->back()->withInput()->with('error', 'Status Karyawan dibutuhkan');
-    //     }
-    //     // Membersihkan dan memvalidasi data masukan
-    //     $status_karyawan = filter_var($data['status_karyawan'], FILTER_SANITIZE_STRING);
-    //     if (empty($status_karyawan)) {
-    //         return redirect()->back()->withInput()->with('error', 'Data yang dimasukkan tidak valid');
-    //     }
-    //     // Persiapkan kueri pembaruan
-    //     $query = $this->db->table('karyawan')->where(['id_tetap' => $id]);
-    //     // Bind data ke kueri
-    //     foreach ($data as $key => $value) {
-    //         if ($key !== 'status_karyawan') { // Hindari mengikat status_karyawan lagi
-    //             $query->set($key, $value);
-    //         }
-    //     }
-    //     // Jalankan kueri pembaruan
-    //     $result = $query->update();
-    //     if ($status_karyawan === 'Tetap') {
-    //         // Hapus data dari tabel karyawankontrak
-    //         $this->db->table('karyawankontrak')->where('id_tetap', $id)->delete();
-    //     }
-    //     if ($result) { // Periksa jika baris terkena dampak
-    //         return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Diperbarui');
-    //     } else {
-    //         return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data');
-    //     }
-    // }
-    //versi 3
+
     public function update($id)
     {
         $data = $this->request->getPost();
         unset($data['_method']);
-        if (!isset($data['status_karyawan'])) {
-            return redirect()->back()->withInput()->with('error', 'Status Karyawan dibutuhkan');
+
+        $query = $this->db->table('karyawan')->where(['id_tetap' => $id]);
+
+        // Dapatkan data karyawan sebelum diupdate
+        $karyawan_before_update = $this->db->table('karyawan')->where(['id_tetap' => $id])->get()->getRowArray();
+        if (!$karyawan_before_update) {
+            return redirect()->back()->withInput()->with('error', 'Data karyawan tidak ditemukan');
         }
-        $status_karyawan = filter_var($data['status_karyawan'], FILTER_SANITIZE_STRING);
-        if (empty($status_karyawan)) {
-            return redirect()->back()->withInput()->with('error', 'Data yang dimasukkan tidak valid');
-        }
-        $query = $this->db->table('karyawan')->where(['id_tetap' => $id])->set($data); // Mengikat semua data termasuk status_karyawan
-        $result = $query->update();
-        if ($result) {
-            if ($status_karyawan === 'Tetap') {
-                // Hapus data dari tabel karyawankontrak
-                $this->db->table('karyawankontrak')->where('id_tetap', $id)->delete();
-            } else { // Jika status_karyawan berubah dari 'Tetap' menjadi 'Kontrak'
-                $karyawankontrak = $this->db->table('karyawankontrak')->where('id_tetap', $id)->get()->getRowArray();
-                if ($karyawankontrak) { // Jika data kontrak sebelumnya ada
-                    unset($karyawankontrak['id_kontrak']);
-                    $karyawankontrak['id_tetap'] = $id;
-                    $this->db->table('karyawankontrak')->insert($karyawankontrak); // Tambahkan data baru ke tabel karyawankontrak
-                }
+
+        // Ambil status karyawan sebelumnya dan saat ini
+        $status_karyawan_before = $karyawan_before_update['status_karyawan'];
+        $status_karyawan_current = filter_var($data['status_karyawan'] ?? '', FILTER_SANITIZE_STRING);
+
+        // Validasi jika status karyawan berubah
+        if ($status_karyawan_before !== $status_karyawan_current) {
+            if (empty($status_karyawan_current)) {
+                return redirect()->back()->withInput()->with('error', 'Data yang dimasukkan tidak valid');
             }
-            return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Diperbarui');
-        } else {
-            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data');
+
+            try {
+                $this->db->transStart();
+
+                if (!$query->update($data)) {
+                    throw new \Exception('Gagal memperbarui data');
+                }
+
+                if ($status_karyawan_current === 'Tetap') {
+                    // Hapus data dari tabel karyawankontrak
+                    $this->db->table('karyawankontrak')->where('id_tetap', $id)->delete();
+                } else { // Jika status_karyawan berubah dari 'Tetap' menjadi 'Kontrak'
+                    $karyawankontrak = $this->db->table('karyawankontrak')->where('id_tetap', $id)->get()->getRowArray();
+
+                    if ($karyawankontrak) { // Jika data kontrak sebelumnya ada
+                        unset($karyawankontrak['id_kontrak']);
+                        $karyawankontrak['id_tetap'] = $id;
+                        $this->db->table('karyawankontrak')->insert($karyawankontrak); // Tambahkan data baru ke tabel karyawankontrak
+                    } else { // Jika data kontrak sebelumnya tidak ada, buat data baru
+                        $karyawankontrak = [
+                            'id_tetap' => $id,
+                            'nama_kontrak' => $data['nama'],
+                            'tanggal_mulai' => $data['tanggal_masuk'],
+                            'tanggal_selesai' => $data['tanggal_keluar']
+                        ];
+                        $this->db->table('karyawankontrak')->insert($karyawankontrak);
+                    }
+                }
+
+                $this->db->transCommit();
+
+                return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Diperbarui');
+            } catch (\Exception $e) {
+                $this->db->transRollback();
+
+                return redirect()->back()->withInput()->with('error', $e->getMessage());
+            }
+        } else { // Jika status karyawan tidak berubah
+            unset($data['status_karyawan']);
+            try {
+                if (!$query->update($data)) {
+                    throw new \Exception('Gagal memperbarui data');
+                }
+
+                return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Diperbarui');
+            } catch (\Exception $e) {
+                return redirect()->back()->withInput()->with('error', $e->getMessage());
+            }
         }
     }
-
-
     public function delete($id)
     {
         $this->db->table('karyawan')->where(['id_tetap' => $id])->delete();
         return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Dihapus');
     }
+
     public function show_detail($id)
     {
         if (

@@ -69,10 +69,12 @@ class Filters extends BaseConfig
             [
                 'Home',
                 'Karyawan', 'Karyawan/*',
-                'pkl', 'pkl/*',
-                'kontrak', 'kontrak/*',
-                'account', 'account/*',
-                'tiket', 'tiket/*',
+                'PKL', 'PKL/*',
+                'Kontrak', 'Kontrak/*',
+                'Account', 'Account/*',
+                'Tiket', 'Tiket/*',
+                'Timesheets', 'Timesheets/*'
+
             ]
         ]
     ];

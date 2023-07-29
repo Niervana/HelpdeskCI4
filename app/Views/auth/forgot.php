@@ -20,7 +20,22 @@ use App\Controllers\Auth;
     <link rel="stylesheet" href="<?= base_url() ?>/template/assets/css/components.css">
     <style>
         body {
-            overflow-y: hidden;
+            /* overflow-y: hidden; */
+            /* If unnecessary, remove this line */
+            background: linear-gradient(180deg, #ffffff 0%, #2e78ff 100%);
+
+            background-size: cover;
+            animation: bg-pan-top 8s both;
+        }
+
+        @keyframes bg-pan-top {
+            0% {
+                background-position: 50% 100%;
+            }
+
+            100% {
+                background-position: 50% 0%;
+            }
         }
     </style>
 </head>
@@ -42,7 +57,7 @@ use App\Controllers\Auth;
                             </div>
 
                             <div class="card-body">
-                                <p class="text-muted">We will send a link to reset your password</p>
+                                <p class="text-muted">We will send a Information to IT Departement</p>
                                 <form method="POST">
                                     <div class="form-group">
                                         <label for="email">Email</label>
@@ -50,7 +65,7 @@ use App\Controllers\Auth;
                                     </div>
                                 </form>
                                 <div class="form-group">
-                                    <a href="<?= base_url('prank'); ?>"><button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
+                                    <a href="<?= base_url('verifikasi'); ?>"><button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
                                             Forgot Password
                                         </button>
                                 </div>
