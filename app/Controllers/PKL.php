@@ -105,15 +105,15 @@ class PKL extends BaseController
             $query = $this->db->table('pkl')->getWhere(['id_pkl' => $id]);
             if ($query->resultID->num_rows > 0) {
                 $data['pkl'] = $query->getRow();
-                $html = view('pkl/pdf', $data);
-                $dompdf = new \Dompdf\Dompdf();
-                $dompdf->set_option('isRemoteEnabled', TRUE);
-                $dompdf->loadHtml($html);
-                $dompdf->setPaper('A4', 'landscape');
-                $dompdf->render();
-                $dompdf->stream("sertifikat.pdf", array("Attachment" => false));
-                exit();
-                // return view('pkl/pdf', $data);
+                // $html = view('pkl/pdf', $data);
+                // $dompdf = new \Dompdf\Dompdf();
+                // $dompdf->set_option('isRemoteEnabled', TRUE);
+                // $dompdf->loadHtml($html);
+                // // $dompdf->setPaper('A4', 'landscape');
+                // $dompdf->render();
+                // $dompdf->stream("sertifikat.pdf", array("Attachment" => false));
+                // exit();
+                return view('pkl/pdf', $data);
             } else {
                 throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
             }

@@ -29,7 +29,7 @@
                             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                                 <div class="carousel-inner">
                                     <div class="carousel-item active">
-                                        <img class="d-block w-100" src="/public/template/assets/img/1.jpg" alt="Harusnya keluar gambar">
+                                        <img class="d-block w-100" src="<?= base_url() ?>/template/assets/img/1.jpg" alt="MBAA">
                                     </div>
                                 </div>
                             </div>

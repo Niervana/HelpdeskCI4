@@ -54,7 +54,7 @@ use App\Controllers\Auth;
                         </div>
 
                         <div class="mt-3">
-                            <a href="localhost/nirvana/public/Home">Back to Home</a>
+                            <a href="/nirvana/public/">Back to Home</a>
                         </div>
                     </div>
                 </div>

@@ -29,7 +29,7 @@ $routes->setAutoRoute(true);
  */
 $routes->get('create-db', function () {
     $forge = \Config\Database::forge();
-    if ($forge->createDatabase('Nirvana')) {
+    if ($forge->createDatabase('ithelpdesk')) {
         echo 'Database telah dibuat';
     }
 });

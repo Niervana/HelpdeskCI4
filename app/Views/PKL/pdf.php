@@ -4,6 +4,7 @@
 <head>
   <title></title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
   <style type="text/css">
     < !-- @page {
       size: A4 landscape;
@@ -17,7 +18,6 @@
       padding: 0;
       background-size: 100% 100%;
       background-repeat: no-repeat;
-      background-image: url('<?= base_url() ?>img/sertifikat.png">');
     }
 
     .page {
@@ -84,7 +84,7 @@
 
     .center-image {
       max-width: 100%;
-      max-height: 100%;
+      height: auto;
     }
 
     -->
@@ -96,7 +96,7 @@
   <!-- Main container -->
   <div id="page1-div" style="position: relative;">
     <!-- Certificate image -->
-    <img class="center-image" width="1666" height="1320" src="<?= base_url() ?>img/sertifikat.png">
+    <img class="center-image" src="<?= base_url() ?>img/sertifikat.png">
     <!-- Company name -->
     <p style="position: absolute; top: 43px; left: 0; right: 0; text-align: center;" class="ft10">
       <b>PT. HARAPAN KURNIA TEXTILE INDONESIA</b>
@@ -133,7 +133,7 @@
       Nomor Induk Siswa/Mahasiswa &nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;<?= $pkl->nisnim; ?>
     </p>
     <p style="position: absolute; top: 380px; left: 0; right: 0; text-align: center;" class="ft14">
-      Prodi / Jurusan &nbsp; &nbsp; &nbsp; &nbsp;: &nbsp; &nbsp; &nbsp; <?= $pkl->jurusan; ?>
+      Prodi / Jurusan : <?= $pkl->jurusan; ?>
     </p>
     <p style="position: absolute; top: 400px; left: 0; right: 0; text-align: center;" class="ft11">
       Telah menyelesaikan program Magang di PT. Harapan Kurnia Textile Indonesia yang diselenggarakan mulai dari
@@ -155,11 +155,11 @@
       Pimpinan Perusahaan
     </p>
     <!-- Signature -->
-    <p style="position: absolute; top: 720px; left: 0; right: 0; text-align: center; white-space: nowrap;" class="ft15">
+    <p style="position: absolute; top: 670px; left: 0; right: 0; text-align: center; white-space: nowrap;" class="ft15">
       HRD Manager
     </p>
     <!-- Signature name -->
-    <p style="position: absolute; top: 700px; left: 0; right: 0; text-align: center; white-space: nowrap;" class="ft14">
+    <p style="position: absolute; top: 650px; left: 0; right: 0; text-align: center; white-space: nowrap;" class="ft14">
       Winner Mardohar Parulian Tambunan
     </p>
   </div>

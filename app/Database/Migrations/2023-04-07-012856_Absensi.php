@@ -28,7 +28,6 @@ class Absensi extends Migration
         $this->forge->createTable('absensi');
     }
 
-
     public function down()
     {
         $this->forge->dropTable('absensi');
