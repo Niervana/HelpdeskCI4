@@ -23,7 +23,7 @@ use App\Controllers\Auth;
         body {
             /* overflow-y: hidden; */
             /* If unnecessary, remove this line */
-            background: linear-gradient(180deg, #ffffff 0%, #2e78ff 100%);
+            background: linear-gradient(180deg, #7dff0bff 10%, #148ffbff 100%);
 
             background-size: cover;
             animation: bg-pan-top 8s both;

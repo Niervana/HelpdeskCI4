@@ -9,11 +9,20 @@ class UserSeeder extends Seeder
     public function run()
     {
         $data = [
-            'nama_users' => 'Nirvana',
-            'email_users' => 'kharismanirvana@gmail.com',
-            'password_users' => password_hash('niervana', PASSWORD_BCRYPT),
-            'createdat_users' => date("Y -m-d H:i:s"),
+            [
+                'nama_users'     => 'Nirvana',
+                'email_users'    => 'kharismanirvana@gmail.com',
+                'password_users' => password_hash('niervana', PASSWORD_BCRYPT),
+                'createdat_users' => date("Y-m-d H:i:s"),
+            ],
+            [
+                'nama_users'     => 'Juki',
+                'email_users'    => 'it@willbes.com',
+                'password_users' => password_hash('willbesit', PASSWORD_BCRYPT),
+                'createdat_users' => date("Y-m-d H:i:s"),
+            ],
         ];
-        $this->db->table('users')->insert($data);
+
+        $this->db->table('users')->insertBatch($data);
     }
 }

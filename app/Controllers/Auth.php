@@ -22,73 +22,55 @@ class Auth extends BaseController
     //     $post = $this->request->getPost();
     //     $query = $this->db->table('users')->getWhere(['email_users' => $post['email']]);
     //     $user = $query->getRow();
+
     //     if ($user) {
-    //         if (password_verify($post['password'], $user->password_users)) {
-    //             $params = ['id_users' => $user->id_users];
-    //             session()->set($params);
-    //             $user = $query;
-    //             return redirect()->to(site_url('Home'));
+    //         if ($user->role == 1) {
+    //             if (password_verify($post['password'], $user->password_users)) {
+    //                 $params = ['id_users' => $user->id_users];
+    //                 session()->set($params);
+    //                 return redirect()->to(site_url('Home'));
+    //             } else {
+    //                 session()->setFlashdata('email_users', $post['email']);
+    //                 session()->setFlashdata('error', 'Password salah');
+    //                 return redirect()->back()->withInput();
+    //             }
     //         } else {
-    //             session()->setFlashdata('email_users', $post['email']);
-    //             return redirect()->back()->withInput()->with('error', 'password incorrect');
+    //             if ($post['password'] === $user->password_users) {
+    //                 $params = ['id_users' => $user->id_users];
+    //                 session()->set($params);
+    //                 return redirect()->to(site_url('Home'));
+    //             } else {
+    //                 session()->setFlashdata('email_users', $post['email']);
+    //                 session()->setFlashdata('error', 'Password salah');
+    //                 return redirect()->back()->withInput();
+    //             }
     //         }
     //     } else {
-    //         return redirect()->back()->withInput()->with('error', 'kamu ga diajak :(');
-    //     }
-    // }
-    // public function loginProcess()
-    // {
-    //     $post = $this->request->getPost();
-    //     $query = $this->db->table('users')->getWhere(['email_users' => $post['email']]);
-    //     $user = $query->getRow();
-    //     if ($user) {
-    //         if (password_verify($post['password'], $user->password_users)) {
-    //             $params = ['id_users' => $user->id_users];
-    //             session()->set($params);
-    //             return redirect()->to(site_url('Home'));
-    //         } else {
-    //             session()->setFlashdata('email_users', $post['email']);
-    //             session()->setFlashdata(
-    //                 'error',
-    //                 'Incorrect password'
-    //             );
-    //             return redirect()->back()->withInput();
-    //         }
-    //     } else {
-    //         session()->setFlashdata('error', 'Incorrect email');
+    //         session()->setFlashdata('error', 'Email salah');
     //         return redirect()->back()->withInput();
     //     }
     // }
     public function loginProcess()
     {
         $post = $this->request->getPost();
+
+        // Ambil user berdasarkan email
         $query = $this->db->table('users')->getWhere(['email_users' => $post['email']]);
         $user = $query->getRow();
 
         if ($user) {
-            if ($user->role == 1) {
-                if (password_verify($post['password'], $user->password_users)) {
-                    $params = ['id_users' => $user->id_users];
-                    session()->set($params);
-                    return redirect()->to(site_url('Home'));
-                } else {
-                    session()->setFlashdata('email_users', $post['email']);
-                    session()->setFlashdata('error', 'Password salah');
-                    return redirect()->back()->withInput();
-                }
+            // Verifikasi password terenkripsi (bcrypt)
+            if (password_verify($post['password'], $user->password_users)) {
+                $params = ['id_users' => $user->id_users];
+                session()->set($params);
+                return redirect()->to(site_url('Home'));
             } else {
-                if ($post['password'] === $user->password_users) {
-                    $params = ['id_users' => $user->id_users];
-                    session()->set($params);
-                    return redirect()->to(site_url('Home'));
-                } else {
-                    session()->setFlashdata('email_users', $post['email']);
-                    session()->setFlashdata('error', 'Password salah');
-                    return redirect()->back()->withInput();
-                }
+                session()->setFlashdata('email_users', $post['email']);
+                session()->setFlashdata('error', 'Password salah');
+                return redirect()->back()->withInput();
             }
         } else {
-            session()->setFlashdata('error', 'Email salah');
+            session()->setFlashdata('error', 'Email tidak ditemukan');
             return redirect()->back()->withInput();
         }
     }
@@ -98,18 +80,18 @@ class Auth extends BaseController
         session()->remove('id_users');
         return redirect()->to(site_url('login'));
     }
-    public function forgot()
-    {
-        return view('auth/forgot');
-    }
-    public function register()
-    {
-        return view('auth/register');
-    }
-    public function verifikasi()
-    {
-        return view('auth/keterangan');
-    }
+    // public function forgot()
+    // {
+    //     return view('auth/forgot');
+    // }
+    // public function register()
+    // {
+    //     return view('auth/register');
+    // }
+    // public function verifikasi()
+    // {
+    //     return view('auth/keterangan');
+    // }
     public function insertdata()
     {
         $data = $this->request->getPost();

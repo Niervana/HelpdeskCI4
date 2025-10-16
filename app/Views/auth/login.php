@@ -23,7 +23,7 @@ use App\Controllers\Auth;
         body {
             /* overflow-y: hidden; */
             /* If unnecessary, remove this line */
-            background: linear-gradient(180deg, #ffffff 0%, #2e78ff 100%);
+            background: linear-gradient(180deg, #7dff0bff 10%, #148ffbff 100%);
 
             background-size: cover;
             animation: bg-pan-top 8s both;
@@ -50,12 +50,12 @@ use App\Controllers\Auth;
                     <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
                         <div class="login-brand">
                             <a href=" <?= base_url('/'); ?>" class="logo">
-                                <img src="https://static.wixstatic.com/media/1c5adc_cce1d829b1c1432baeeba778ad268029~mv2.png/v1/fill/w_326,h_163,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/LOGO%20100X500.png" alt="LOGO 100X500.png" style="width: 300px; object-fit: contain; object-position: center center;" srcset="https://static.wixstatic.com/media/1c5adc_cce1d829b1c1432baeeba778ad268029~mv2.png/v1/fill/w_326,h_163,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/LOGO%20100X500.png" fetchpriority="high">
+                                <img src='lgo.png' alt="LOGO WILLBES" style="width: 300px; object-fit: contain; object-position: center center;" srcset="" fetchpriority="high">
                             </a>
                         </div>
                         <div class="card card-primary">
-                            <div class="card-header">
-                                <h4>Login</h4>
+                            <div class="card-header d-flex justify-content-center align-items-center">
+                                <h4 class="m-0">IT Inventory PT. Willbes Global</h4>
                             </div>
                             <div class="card-body">
                                 <?php if (session()->getFlashdata('error')) : ?>
@@ -80,9 +80,12 @@ use App\Controllers\Auth;
                                     <div class="form-group">
                                         <div class="d-block">
                                             <label for="password" class="control-label">Password</label>
-                                            <div class="float-right">
-                                                <a href="forgot" class="text-small">Hilap Password?</a>
+                                            <div class="invalid-feedback">
+                                                Please eusi in your password
                                             </div>
+                                            <!-- <div class="float-right">
+                                                <a href="forgot" class="text-small">Hilap Password?</a>
+                                            </div> -->
                                         </div>
                                         <div class="input-group">
                                             <input id="password" type="password" class="form-control" name="password" tabindex="2" required>
@@ -105,9 +108,9 @@ use App\Controllers\Auth;
                                             Login
                                         </button>
                                     </div>
-                                    <div class=" text-muted text-center">
+                                    <!-- <div class=" text-muted text-center">
                                         Don't have an account? <a href="register">Create One</a>
-                                    </div>
+                                    </div> -->
                                 </form>
                             </div>
                         </div>

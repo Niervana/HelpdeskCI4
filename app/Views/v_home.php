@@ -13,8 +13,7 @@
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <section class="section">
-
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-lg-3 col-md-6 col-sm-6 col-12">
             <div class="card card-statistic-1">
                 <div class="card-icon bg-primary">
@@ -25,7 +24,8 @@
                         <h4>Jumlah Karyawan</h4>
                     </div>
                     <div class="card-body">
-                        <?php echo $total_karyawan; ?>
+                        <?php //echo $total_karyawan; 
+                        ?>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,8 @@
                         <h4>Karyawan Tetap</h4>
                     </div>
                     <div class="card-body">
-                        <?php echo $total_karyawan_tetap; ?>
+                        <?php //echo $total_karyawan_tetap; 
+                        ?>
                     </div>
                 </div>
             </div>
@@ -55,7 +56,8 @@
                         <h4>Karyawan Kontrak</h4>
                     </div>
                     <div class="card-body">
-                        <?php echo $total_karyawan_kontrak; ?>
+                        <?php //echo $total_karyawan_kontrak; 
+                        ?>
                     </div>
                 </div>
             </div>
@@ -70,7 +72,8 @@
                         <h4>PKL</h4>
                     </div>
                     <div class="card-body">
-                        <?php echo $total_pkl; ?>
+                    <?php //echo $total_pkl; 
+                    ?>
                     </div>
                 </div>
             </div>
@@ -135,8 +138,8 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
+    </div> -->
+    <!-- <div class="row">
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-header">
@@ -174,10 +177,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
-    <div class="col-12 col-sm-12 col-lg-12">
+    <!-- <div class="col-12 col-sm-12 col-lg-12">
         <div class="card">
             <div class="card-header">
                 <h4>Departemen</h4>
@@ -186,13 +189,13 @@
                 <canvas id="grafik-karyawan"></canvas>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
 </section>
 <?= $this->endSection() ?>
 <?= $this->section('script') ?>
-<script>
+<!-- <script>
     function showDateTime() {
         const now = new Date();
         const options = {
@@ -209,10 +212,11 @@
         document.getElementById('date-time').innerText = dateTime;
     }
     setInterval(showDateTime, 1000);
-</script>
-<script>
+</script> -->
+<!-- <script>
     var ctx = document.getElementById('grafik-karyawan').getContext('2d');
-    var data_karyawan = <?php echo json_encode($departemen); ?>;
+    var data_karyawan = <?php //echo json_encode($departemen); 
+                        ?>;
 
     var labels = [];
     var data = [];
@@ -250,10 +254,11 @@
             }
         }
     });
-</script>
-<script>
+</script> -->
+<!-- <script>
     var ctx = document.getElementById('grafik-badanusaha').getContext('2d');
-    var data_karyawan = <?php echo json_encode($badanusaha); ?>;
+    var data_karyawan = <?php //echo json_encode($badanusaha); 
+                        ?>;
 
     var labels = [];
     var data = [];
@@ -407,6 +412,6 @@
         .catch(error => {
             console.log('Terjadi kesalahan:', error);
         });
-</script>
+</script> -->
 
 <?= $this->endSection() ?>

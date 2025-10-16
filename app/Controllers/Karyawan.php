@@ -11,7 +11,7 @@ class Karyawan extends BaseController
     {
         helper('form');
         $this->model = new KaryawanModel();
-        $this->model = new KontrakModel();
+        // $this->model = new KontrakModel();
     }
     public function index()
     {
@@ -20,8 +20,8 @@ class Karyawan extends BaseController
         $query   = $builder->get()->getResult();
         $data['karyawan'] = $query;
         // inimah buat ngitung total datakaryawan
-        $model = new KaryawanModel();
-        $data['total_rows'] = $model->total_rows();
+        // $model = new KaryawanModel();
+        // $data['total_rows'] = $model->total_rows();
         return view('karyawan/v_karyawan', $data);
     }
     // ini fungsi untuk nge route ke view addkaryawan
@@ -34,20 +34,20 @@ class Karyawan extends BaseController
     {
         $data = $this->request->getPost();
         // $salary = str_replace(',', '', $data['salary']);
-        $status_karyawan = $data['status_karyawan'];
+        // $status_karyawan = $data['status_karyawan'];
         $this->db->table('karyawan')->insert($data);
-        if ($status_karyawan === 'Kontrak') {
-            $last_id = $this->db->insertID('');
-            $dataKontrak = [
-                'id_tetap' => $last_id,
-            ];
-            $this->db->table('karyawankontrak')->insert($dataKontrak);
-        }
-        if ($this->db->affectedRows() > 0) {
-            return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Dibuat');
-        } else {
-            return redirect()->back()->withInput()->with('error', 'Data gagal disimpan.');
-        }
+        // if ($status_karyawan === 'Kontrak') {
+        //     $last_id = $this->db->insertID('');
+        //     $dataKontrak = [
+        //         'id_tetap' => $last_id,
+        //     ];
+        //     $this->db->table('karyawankontrak')->insert($dataKontrak);
+        // }
+        // if ($this->db->affectedRows() > 0) {
+        //     return redirect()->to(site_url('karyawan'))->with('success', 'Data Berhasil Dibuat');
+        // } else {
+        //     return redirect()->back()->withInput()->with('error', 'Data gagal disimpan.');
+        // }
     }
 
     // ini fungsi untuk nge route ke view editkaryawan

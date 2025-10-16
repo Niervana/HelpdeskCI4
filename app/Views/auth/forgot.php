@@ -22,7 +22,7 @@ use App\Controllers\Auth;
         body {
             /* overflow-y: hidden; */
             /* If unnecessary, remove this line */
-            background: linear-gradient(180deg, #ffffff 0%, #2e78ff 100%);
+            background: linear-gradient(180deg, #7dff0bff 10%, #148ffbff 100%);
 
             background-size: cover;
             animation: bg-pan-top 8s both;
@@ -48,7 +48,7 @@ use App\Controllers\Auth;
                     <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
                         <div class="login-brand">
                             <a href=" <?= base_url('/'); ?>" class="logo">
-                                <img src="https://static.wixstatic.com/media/1c5adc_cce1d829b1c1432baeeba778ad268029~mv2.png/v1/fill/w_326,h_163,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/LOGO%20100X500.png" alt="LOGO 100X500.png" style="width: 300px; object-fit: contain; object-position: center center;" srcset="https://static.wixstatic.com/media/1c5adc_cce1d829b1c1432baeeba778ad268029~mv2.png/v1/fill/w_326,h_163,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/LOGO%20100X500.png" fetchpriority="high">
+                                <img src='lgo.png' alt="LOGO 100X500.png" style="width: 300px; object-fit: contain; object-position: center center;" srcset="" fetchpriority="high">
                             </a>
                         </div>
                         <div class="card card-primary">
