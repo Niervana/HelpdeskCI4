@@ -37,7 +37,9 @@
     <link rel="stylesheet" href="<?= base_url() ?>/template/assets/css/components.css">
 </head>
 
-<body class="noselect">
+<?php $currentSegment = service('request')->getUri()->getSegment(1); ?>
+
+<body class="noselect<?= ($currentSegment !== '') ? ' sidebar-minimize' : '' ?>">
     <div id="app">
         <?= $this->renderSection('header') ?>
         <div class="main-wrapper">
@@ -56,7 +58,7 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <div class="dropdown-title">Hallo <?= userLogin()->nama_users ?></div>
-                            <a href="features-profile.html" class="dropdown-item has-icon">
+                            <!-- <a href="features-profile.html" class="dropdown-item has-icon">
                                 <i class="far fa-user"></i> Profile
                             </a>
 
@@ -65,7 +67,7 @@
                             </a>
                             <a href="features-settings.html" class="dropdown-item has-icon">
                                 <i class="fas fa-cog"></i> Settings
-                            </a>
+                            </a> -->
                             <div class="dropdown-divider"></div>
                             <a href="<?= site_url('Auth/logout') ?>" class="dropdown-item has-icon text-danger">
                                 <i class="fas fa-sign-out-alt"></i> Logout
@@ -78,13 +80,12 @@
                 <aside id="sidebar-wrapper">
                     <div class="sidebar-brand">
                         <a href=" <?= base_url('/'); ?>" class="logo">
-                            <!-- <img src="https://static.wixstatic.com/media/1c5adc_cce1d829b1c1432baeeba778ad268029~mv2.png/v1/fill/w_326,h_163,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/LOGO%20100X500.png" alt="LOGO 100X500.png" style="width: 150px; height: 50px; object-fit: contain; object-position: center center;" srcset="https://static.wixstatic.com/media/1c5adc_cce1d829b1c1432baeeba778ad268029~mv2.png/v1/fill/w_326,h_163,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/LOGO%20100X500.png" fetchpriority="high"> -->
-                            <img src='lgo.png' alt="LOGO 100X500.png" style="width: 150px; height: 50px; object-fit: contain; object-position: center center;" srcset='' fetchpriority="high">
+                            <img src="<?= base_url() ?>/lgo.png" alt="LOGO" style="width: 150px; height: 50px; object-fit: contain; object-position: center center;" srcset='' fetchpriority="high">
                         </a>
                     </div>
                     <div class="sidebar-brand sidebar-brand-sm">
                         <a href=" <?= base_url('/'); ?>" class="logo">
-                            <img alt="image" src="<?= base_url() ?>/lgo.png" alt="HK" width="40">
+                            <img alt="image" src="<?= base_url() ?>/lgo.png" alt="Willbes" width="40">
                         </a>
                     </div>
                     <ul class="sidebar-menu">
@@ -146,6 +147,9 @@
         });
         $(document).ready(function() {
             $('#table1').DataTable();
+            <?php if ($currentSegment !== ''): ?>
+                $('body').addClass('sidebar-minimize');
+            <?php endif; ?>
         });
     </script>
 

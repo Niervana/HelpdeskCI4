@@ -8,7 +8,7 @@ use App\Controllers\Auth;
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>HRM HKTI</title>
+    <title>IT Inventory</title>
 
     <!-- General CSS Files -->
     <link rel="stylesheet" href="<?= base_url() ?>/template/node_modules/bootstrap/dist/css/bootstrap.min.css">

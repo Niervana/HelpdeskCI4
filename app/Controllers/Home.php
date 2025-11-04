@@ -2,15 +2,14 @@
 
 namespace App\Controllers;
 
-use App\Models\KaryawanModel;
-use App\Models\PraktikModel;
+use App\Models\InventoryModel;
 
 class Home extends BaseController
 {
     public function __construct()
     {
         helper('form');
-        $this->karyawan = new KaryawanModel();
+        $this->inventory = new InventoryModel();
     }
 
     public function index()

@@ -46,25 +46,27 @@ $routes->addRedirect('/', 'Home');
 //exception------------------------------------------------------
 
 //mesin absensi-------------------------------------------------
-$routes->get('forgetfp', 'Absensi::index');
-$routes->get('attendancedatafingerprint', 'Absensi::attendance');
-$routes->get('userdatafingerprint', 'Absensi::datauser');
+// $routes->get('forgetfp', 'Absensi::index');
+// $routes->get('attendancedatafingerprint', 'Absensi::attendance');
+// $routes->get('userdatafingerprint', 'Absensi::datauser');
 // -------------------------------------------------------------
-// karyawan
-$routes->get('karyawan', 'Karyawan::index');
-$routes->get('karyawan/add', 'Karyawan::add');
-$routes->post('karyawan', 'Karyawan::insert');
-$routes->get('karyawan/edit/(:num)', 'Karyawan::edit/$1');
-$routes->put('karyawan(:any)', 'Karyawan::update/$1');
-$routes->delete('karyawan(:segment)', 'Karyawan::delete/$1');
-$routes->get('karyawan/detail', 'Karyawan::show_detail');
-$routes->post('karyawan/import', 'Karyawan::import');
+// inventory
+$routes->get('inventory', 'Inventory::index');
+$routes->get('inventory/add', 'Inventory::add');
+$routes->post('inventory/insert', 'Inventory::insert');
+$routes->get('inventory/edit/(:num)', 'Inventory::edit/$1');
+$routes->put('inventory/update/(:num)', 'Inventory::update/$1');
+$routes->delete('inventory/(:num)', 'Inventory::delete/$1');
+$routes->get('inventory/detail/(:num)', 'Inventory::show_detail/$1');
+$routes->post('inventory/import', 'Inventory::import');
+$routes->get('inventory/print', 'Inventory::print');
+$routes->get('inventory/excel', 'Inventory::excel');
 
 // ----------------------------------------------------------
 // kontrak
-$routes->get('kontrak', 'Kontrak::index');
-$routes->get('kontrak/edit/(:num)', 'Kontrak::edit/$1');
-$routes->put('kontrak(:any)', 'Kontrak::updatekontrak/$1');
+// $routes->get('kontrak', 'Kontrak::index');
+// $routes->get('kontrak/edit/(:num)', 'Kontrak::edit/$1');
+// $routes->put('kontrak(:any)', 'Kontrak::updatekontrak/$1');
 
 // ----------------------------------------------------------
 // account
@@ -75,8 +77,8 @@ $routes->get('account/move/(:num)', 'Account::move/$1');
 
 //-----------------------------------------------------------
 // timesheets
-$routes->get('attendance', 'Timesheets::attendance');
-$routes->get('officeshift', 'Timesheets::officeshift');
+// $routes->get('attendance', 'Timesheets::attendance');
+// $routes->get('officeshift', 'Timesheets::officeshift');
 //-----------------------------------------------------------
 // tiketing
 $routes->get('tiket', 'Tiket::index');
@@ -85,14 +87,14 @@ $routes->post('tiket', 'Tiket::insert');
 $routes->delete('tiket(:segment)', 'Tiket::delete/$1');
 //-----------------------------------------------------------
 // PKL
-$routes->get('pkl', 'PKL::index');
-$routes->get('pkl/add', 'PKL::add');
-$routes->post('pkl', 'PKL::insert');
-$routes->get('pkl/edit/(:num)', 'PKL::edit/$1');
-$routes->put('pkl(:any)', 'PKL::update/$1');
-$routes->delete('pkl(:segment)', 'PKL::delete/$1');
-$routes->get('pkl/import', 'PKL::import_csv');
-$routes->get('pkl/sertifikat', 'PKL::sertifikat');
+// $routes->get('pkl', 'PKL::index');
+// $routes->get('pkl/add', 'PKL::add');
+// $routes->post('pkl', 'PKL::insert');
+// $routes->get('pkl/edit/(:num)', 'PKL::edit/$1');
+// $routes->put('pkl(:any)', 'PKL::update/$1');
+// $routes->delete('pkl(:segment)', 'PKL::delete/$1');
+// $routes->get('pkl/import', 'PKL::import_csv');
+// $routes->get('pkl/sertifikat', 'PKL::sertifikat');
 // $routes->get('pkl(:num)', 'PKL::cetakSertifikat/$1');
 /*
  * --------------------------------------------------------------------
