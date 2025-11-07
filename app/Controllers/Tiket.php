@@ -4,16 +4,19 @@ namespace App\Controllers;
 
 use App\Models\TiketModel;
 use App\Models\InventoryModel;
+use App\Models\KaryawanModel; // Tambahkan ini
 
 class Tiket extends BaseController
 {
     protected $TiketModel;
     protected $InventoryModel;
+    protected $KaryawanModel; // Deklarasikan properti ini
 
     public function __construct()
     {
         $this->TiketModel = new TiketModel();
         $this->InventoryModel = new InventoryModel();
+        $this->KaryawanModel = new KaryawanModel(); // Inisialisasi KaryawanModel
     }
 
     public function index()

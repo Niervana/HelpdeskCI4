@@ -1,26 +1,11 @@
-# TODO: Tambahkan Tombol Print dan Excel untuk Data Inventory
+# TODO: Fix Log Display for Deleted Inventory
 
-## Langkah-langkah yang perlu dilakukan:
+## Steps to Complete
 
-1. **Edit app/Views/inventory/v_inventory.php**
-
-   - Tambahkan tombol Print dan Excel di dalam card-body, setelah tabel.
-   - Tombol hanya muncul jika data inventory tidak kosong (!empty($inventory)).
-   - Tombol Print: Link ke route 'inventory/print'.
-   - Tombol Excel: Link ke route 'inventory/excel'.
-
-2. **Edit app/Config/Routes.php**
-
-   - Tambahkan route untuk 'inventory/print' -> Inventory::print.
-   - Tambahkan route untuk 'inventory/excel' -> Inventory::excel.
-
-3. **Edit app/Controllers/Inventory.php**
-
-   - Tambahkan method print(): Generate PDF menggunakan dompdf dari data inventory.
-   - Tambahkan method excel(): Export data inventory sebagai CSV file.
-
-## Status:
-
-- [x] Step 1: Edit v_inventory.php
-- [x] Step 2: Edit Routes.php
-- [x] Step 3: Edit Inventory.php
+- [ ] Create a new migration to add 'nama_karyawan' VARCHAR column to log table.
+- [ ] Update LogModel to include 'nama_karyawan' in allowedFields.
+- [ ] Update Inventory.php: in log() method, change query to select from log, join only users, and select log.nama_karyawan.
+- [ ] In logging methods (insert, update, delete), add 'nama_karyawan' to logData.
+- [ ] Change action_type to 'DELETE' in delete method.
+- [ ] Update v_log.php to use $log['nama_karyawan'] instead of $log['nama_karyawan'] (already correct).
+- [ ] Test by deleting an inventory and checking if log remains with 'DELETE' action.

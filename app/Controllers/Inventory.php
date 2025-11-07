@@ -6,18 +6,23 @@ use App\Models\InventoryModel;
 
 class Inventory extends BaseController
 {
+    protected $db;
+    protected $LogModel;
+
     public function __construct()
     {
         helper('form');
         $this->model = new InventoryModel();
+        $this->db = \Config\Database::connect();
+        $this->LogModel = new \App\Models\LogModel();
+        date_default_timezone_set('Asia/Bangkok');
     }
     public function index()
     {
         // ini buat nampilin semua data di table 
-        $model = new InventoryModel();
-        $data['inventory'] = $model->getAllInventory();
+        $data['inventory'] = $this->model->getAllInventory();
         // inimah buat ngitung total datainventory
-        $data['total_rows'] = $model->total_rows();
+        $data['total_rows'] = $this->model->total_rows();
         return view('inventory/v_inventory', $data);
     }
     // ini fungsi untuk nge route ke view addinventory
@@ -72,6 +77,20 @@ class Inventory extends BaseController
         $this->db->table('inventory')->insert($inventoryData);
         $inventoryId = $this->db->insertID();
 
+        // Log the action
+        $logModel = new \App\Models\LogModel();
+        $logData = [
+            'inventory_id' => $inventoryId,
+            'nama_karyawan' => $data['nama_karyawan'],
+            'action_type' => 'INSERT',
+            'before_change' => null, // No previous state for creation
+            'after_change' => json_encode($data), // Log the full input data
+            'users_id' => userLogin()->id_users, // Assuming userLogin() is available
+            'action_date' => date('Y-m-d H:i:s'),
+            'ip_address' => $this->request->getIPAddress(true),
+            'description' => 'Menambahkan inventaris baru untuk karyawan ' . $data['nama_karyawan'] . ' dengan perangkat utama ' . $data['manufaktur'] . ' ' . $data['jenis'] . '.',
+        ];
+        $logModel->insert($logData);
 
         return redirect()->to(site_url('inventory'))->with('success', 'Data Berhasil Ditambahkan');
     }
@@ -80,8 +99,7 @@ class Inventory extends BaseController
     public function edit($id = null)
     {
         if ($id != null) {
-            $model = new InventoryModel();
-            $data['inventory'] = $model->getInventoryWithDetails($id);
+            $data['inventory'] = $this->model->getInventoryWithDetails($id);
             if ($data['inventory']) {
                 return view('inventory/v_editinventory', $data);
             } else {
@@ -227,6 +245,39 @@ class Inventory extends BaseController
         ];
         $this->db->table('supportdevice')->where('support_id', $current->support_id)->update($supportDeviceData);
 
+        // Get after_change data
+        $afterChange = [
+            'nama_karyawan' => $karyawanData['nama_karyawan'],
+            'departemen_karyawan' => $karyawanData['departemen_karyawan'],
+            'manufaktur' => $mainDeviceData['manufaktur'],
+            'jenis' => $mainDeviceData['jenis'],
+            'cpu' => $mainDeviceData['cpu'],
+            'ram' => $mainDeviceData['ram'],
+            'os' => $mainDeviceData['os'],
+            'lisensi' => $mainDeviceData['lisensi'],
+            'ipaddress' => $mainDeviceData['ipaddress'],
+            'hostname' => $mainDeviceData['hostname'],
+            'credential' => $mainDeviceData['credential'],
+            'monitor' => $supportDeviceData['monitor'],
+            'keyboard' => $supportDeviceData['keyboard'],
+            'mouse' => $supportDeviceData['mouse'],
+            'usb_converter' => $supportDeviceData['usb_converter'],
+            'external_storage' => $supportDeviceData['external_storage']
+        ];
+
+        // Log the action
+        $logData = [
+            'inventory_id' => $id,
+            'nama_karyawan' => $data['nama_karyawan'],
+            'action_type' => 'UPDATE',
+            'before_change' => json_encode($beforeChange),
+            'after_change' => json_encode($afterChange),
+            'users_id' => userLogin()->id_users,
+            'action_date' => date('Y-m-d H:i:s'),
+            'ip_address' => $this->request->getIPAddress(true),
+            'description' => 'Memperbarui inventaris untuk karyawan ' . $data['nama_karyawan'] . '.',
+        ];
+        $this->LogModel->insert($logData);
 
         return redirect()->to(site_url('inventory'))->with('success', 'Data Berhasil Diperbarui');
     }
@@ -255,6 +306,20 @@ class Inventory extends BaseController
                 'usb_converter' => $current->usb_converter,
                 'external_storage' => $current->external_storage
             ];
+
+            // Log the action before deleting
+            $logData = [
+                'inventory_id' => $id,
+                'nama_karyawan' => $current->nama_karyawan,
+                'action_type' => 'DELETE',
+                'before_change' => json_encode($beforeChange),
+                'after_change' => null, // No after state for deletion
+                'users_id' => userLogin()->id_users,
+                'action_date' => date('Y-m-d H:i:s'),
+                'ip_address' => $this->request->getIPAddress(true),
+                'description' => 'Menghapus inventaris untuk karyawan ' . $current->nama_karyawan . '.',
+            ];
+            $this->LogModel->insert($logData);
 
             try {
                 $this->db->transStart();
@@ -345,5 +410,16 @@ class Inventory extends BaseController
 
         fclose($output);
         exit;
+    }
+
+    public function log()
+    {
+        $data['logs'] = $this->db->table('log')
+            ->select('log.*, users.nama_users')
+            ->join('users', 'log.users_id = users.id_users')
+            ->orderBy('log.log_id', 'DESC')
+            ->get()
+            ->getResultArray();
+        return view('inventory/v_log', $data);
     }
 }

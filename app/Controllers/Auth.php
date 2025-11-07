@@ -5,6 +5,12 @@ namespace App\Controllers;
 
 class Auth extends BaseController
 {
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = \Config\Database::connect();
+    }
 
     public function index()
     {
@@ -88,10 +94,10 @@ class Auth extends BaseController
     // {
     //     return view('auth/register');
     // }
-    // public function verifikasi()
-    // {
-    //     return view('auth/keterangan');
-    // }
+    public function verifikasi()
+    {
+        return view('auth/keterangan');
+    }
     public function insertdata()
     {
         $data = $this->request->getPost();

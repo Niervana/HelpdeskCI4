@@ -84,6 +84,30 @@ $(document).ready(function () {
     column.visible(!column.visible());
   });
 });
+
+//datatables example_no_buttons
+$(document).ready(function () {
+  // Deteksi ukuran layar untuk konfigurasi responsive
+  var isMobile = $(window).width() < 768; // Asumsikan mobile di bawah 768px
+  var table_no_buttons = $("#nirvana").DataTable({
+    responsive: !isMobile, // Responsive true di PC, false di mobile
+    scrollX: isMobile, // Horizontal scroll di mobile
+    dom:
+      "<'row'<'col-6'l><'col-6'f>>" +
+      "<'row'<'col-12'tr>>" +
+      "<'row'<'col-6'i><'col-6'p>>",
+    columnDefs: [
+      {
+        targets: [14, 15],
+        className: "no-export",
+      },
+    ],
+  });
+  $(".toggle-column").on("click", function () {
+    var column = table_no_buttons.column($(this).data("column"));
+    column.visible(!column.visible());
+  });
+});
 //funtion show/hide categories
 $(document).ready(function () {
   $(".dropdown-item").click(function () {

@@ -61,6 +61,7 @@ $routes->get('inventory/detail/(:num)', 'Inventory::show_detail/$1');
 $routes->post('inventory/import', 'Inventory::import');
 $routes->get('inventory/print', 'Inventory::print');
 $routes->get('inventory/excel', 'Inventory::excel');
+$routes->get('inventory/log', 'Inventory::log');
 
 // ----------------------------------------------------------
 // kontrak

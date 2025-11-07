@@ -37,8 +37,15 @@
                         <h6>DataTabel Inventory IT</h6>
                     </div>
                     <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <a href="<?php echo site_url('inventory/print'); ?>" class="btn btn-primary <?php echo (isset($inventory) && !empty($inventory)) ? '' : 'disabled'; ?>" target="_blank"><i class="fas fa-print"></i> Print</a>
+                                <a href="<?php echo site_url('inventory/excel'); ?>" class="btn btn-success <?php echo (isset($inventory) && !empty($inventory)) ? '' : 'disabled'; ?>"><i class="fas fa-file-excel"></i> Excel</a>
+                                <a href="<?php echo site_url('inventory/log'); ?>" class="btn btn-dark"><i class="fas fa-file"></i> Log</a>
+                            </div>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table table-striped" id="example" style="width:100%">
+                            <table class="table table-striped" id="nirvana" style="width:100%">
                                 <thead>
                                     <tr align="center">
                                         <th align="left">Nama</th>
@@ -111,13 +118,11 @@
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
-                        <?php if (isset($inventory) && !empty($inventory)) : ?>
-                            <div class="mt-3">
-                                <a href="<?php echo site_url('inventory/print'); ?>" class="btn btn-primary" target="_blank"><i class="fas fa-print"></i> Print</a>
-                                <a href="<?php echo site_url('inventory/excel'); ?>" class="btn btn-success"><i class="fas fa-file-excel"></i> Excel</a>
-                                <a href="<?php echo site_url('inventory/-'); ?>" class="btn btn btn-dark"><i class="fas fa-file"></i> Log</a>
-                            </div>
-                        <?php endif; ?>
+                        <!-- <div class="mt-3">
+                            <a href="<?php echo site_url('inventory/print'); ?>" class="btn btn-primary <?php echo (isset($inventory) && !empty($inventory)) ? '' : 'disabled'; ?>" target="_blank"><i class="fas fa-print"></i> Print</a>
+                            <a href="<?php echo site_url('inventory/excel'); ?>" class="btn btn-success <?php echo (isset($inventory) && !empty($inventory)) ? '' : 'disabled'; ?>"><i class="fas fa-file-excel"></i> Excel</a>
+                            <a href="<?php echo site_url('inventory/log'); ?>" class="btn btn-dark"><i class="fas fa-file"></i> Log</a>
+                        </div> -->
                         <!-- <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                                 <i class="fa-sharp fa-solid fa-eye-low-vision"></i> Show/Hide
