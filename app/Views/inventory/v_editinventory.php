@@ -65,6 +65,14 @@
                                     <label>External Storage</label>
                                     <input type="text" name="external_storage" value="<?= $inventory->external_storage ?>" class="form-control">
                                 </div>
+                                <div class="form-group">
+                                    <label>Printer</label>
+                                    <input type="text" name="printer" value="<?= $inventory->printer ?>" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Scanner</label>
+                                    <input type="text" name="scanner" value="<?= $inventory->scanner ?>" class="form-control">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -96,8 +104,20 @@
                                     <input type="text" name="os" value="<?= $inventory->os ?>" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label>Lisensi</label>
-                                    <input type="text" name="lisensi" value="<?= $inventory->lisensi ?>" class="form-control">
+                                    <label>Lisensi Windows</label>
+                                    <input type="text" name="lisensi_windows" value="<?= $inventory->lisensi_windows ?>" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Storage</label>
+                                    <input type="text" name="storage" value="<?= $inventory->storage ?>" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Office</label>
+                                    <input type="text" name="office" value="<?= $inventory->office ?>" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Lisensi Office</label>
+                                    <input type="text" name="lisensi_office" value="<?= $inventory->lisensi_office ?>" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>IP Address</label>

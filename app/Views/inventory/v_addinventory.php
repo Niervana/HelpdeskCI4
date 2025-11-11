@@ -64,6 +64,14 @@
                                 <label>External Storage</label>
                                 <input type="text" name="external_storage" class="form-control">
                             </div>
+                            <div class="form-group">
+                                <label>Printer</label>
+                                <input type="text" name="printer" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Scanner</label>
+                                <input type="text" name="scanner" class="form-control">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,8 +103,20 @@
                                 <input type="text" name="os" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label>Lisensi</label>
-                                <input type="text" name="lisensi" class="form-control">
+                                <label>Lisensi Windows</label>
+                                <input type="text" name="lisensi_windows" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Storage</label>
+                                <input type="text" name="storage" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Office</label>
+                                <input type="text" name="office" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Lisensi Office</label>
+                                <input type="text" name="lisensi_office" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label>IP Address</label>

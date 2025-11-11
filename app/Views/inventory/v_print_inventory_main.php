@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Data Inventory IT</title>
+    <title>Data Inventory IT - Main Device</title>
     <style>
         @page {
             margin: 10mm;
@@ -46,11 +46,11 @@
         }
 
         .data-table th {
-            background-color: #333;
+            background-color: #007bff;
             color: white;
             padding: 5px 2px;
             text-align: center;
-            border: 1px solid #333;
+            border: 1px solid #007bff;
             font-weight: bold;
             font-size: 7pt;
             vertical-align: middle;
@@ -70,93 +70,65 @@
             background-color: #f9f9f9;
         }
 
-        /* Column width optimization - super tight */
+        /* Column width optimization */
         .col-no {
-            width: 2%;
+            width: 3%;
         }
 
         .col-name {
-            width: 7%;
+            width: 12%;
         }
 
         .col-dept {
-            width: 6%;
+            width: 10%;
         }
 
         .col-mfr {
-            width: 5%;
+            width: 8%;
         }
 
         .col-type {
-            width: 5%;
+            width: 8%;
         }
 
         .col-cpu {
-            width: 6%;
+            width: 10%;
         }
 
         .col-ram {
-            width: 4%;
+            width: 6%;
         }
 
         .col-os {
-            width: 5%;
+            width: 8%;
         }
 
         .col-lic-win {
-            width: 6%;
+            width: 10%;
         }
 
         .col-storage {
-            width: 5%;
+            width: 8%;
         }
 
         .col-office {
-            width: 5%;
+            width: 8%;
         }
 
         .col-lic-off {
-            width: 6%;
+            width: 10%;
         }
 
         .col-ip {
-            width: 6%;
+            width: 10%;
         }
 
         .col-host {
-            width: 6%;
+            width: 10%;
         }
 
         .col-cred {
-            width: 6%;
-        }
-
-        .col-monitor {
-            width: 5%;
-        }
-
-        .col-kbd {
-            width: 4%;
-        }
-
-        .col-mouse {
-            width: 4%;
-        }
-
-        .col-usb {
-            width: 4%;
-        }
-
-        .col-ext {
-            width: 4%;
-        }
-
-        .col-printer {
-            width: 4%;
-        }
-
-        .col-scanner {
-            width: 4%;
+            width: 10%;
         }
 
         .text-center {
@@ -191,7 +163,7 @@
 
 <body>
     <div class="header">
-        <h1>DATA INVENTORY IT</h1>
+        <h1>DATA INVENTORY IT - MAIN DEVICE</h1>
         <p>Dicetak: <?= date('d/m/Y H:i:s') ?> | Total: <?= count($inventory) ?> items</p>
     </div>
 
@@ -199,69 +171,20 @@
         <thead>
             <tr>
                 <th class="col-no">No</th>
-                <th class="col-name">
-                    <div class="rotate">Nama Karyawan</div>
-                </th>
-                <th class="col-dept">
-                    <div class="rotate">Departemen</div>
-                </th>
-                <th class="col-mfr">
-                    <div class="rotate">Manufaktur</div>
-                </th>
-                <th class="col-type">
-                    <div class="rotate">Jenis</div>
-                </th>
-                <th class="col-cpu">
-                    <div class="rotate">CPU</div>
-                </th>
-                <th class="col-ram">
-                    <div class="rotate">RAM</div>
-                </th>
-                <th class="col-os">
-                    <div class="rotate">OS</div>
-                </th>
-                <th class="col-lic-win">
-                    <div class="rotate">Lic.Win</div>
-                </th>
-                <th class="col-storage">
-                    <div class="rotate">Storage</div>
-                </th>
-                <th class="col-office">
-                    <div class="rotate">Office</div>
-                </th>
-                <th class="col-lic-off">
-                    <div class="rotate">Lic.Off</div>
-                </th>
-                <th class="col-ip">
-                    <div class="rotate">IP Address</div>
-                </th>
-                <th class="col-host">
-                    <div class="rotate">Hostname</div>
-                </th>
-                <th class="col-cred">
-                    <div class="rotate">Credential</div>
-                </th>
-                <th class="col-monitor">
-                    <div class="rotate">Monitor</div>
-                </th>
-                <th class="col-kbd">
-                    <div class="rotate">Keyboard</div>
-                </th>
-                <th class="col-mouse">
-                    <div class="rotate">Mouse</div>
-                </th>
-                <th class="col-usb">
-                    <div class="rotate">USB Conv</div>
-                </th>
-                <th class="col-ext">
-                    <div class="rotate">Ext.Storage</div>
-                </th>
-                <th class="col-printer">
-                    <div class="rotate">Printer</div>
-                </th>
-                <th class="col-scanner">
-                    <div class="rotate">Scanner</div>
-                </th>
+                <th class="col-name">Nama Karyawan</th>
+                <th class="col-dept">Departemen</th>
+                <th class="col-mfr">Manufaktur</th>
+                <th class="col-type">Jenis</th>
+                <th class="col-cpu">CPU</th>
+                <th class="col-ram">RAM</th>
+                <th class="col-os">OS</th>
+                <th class="col-lic-win">Lic.Win</th>
+                <th class="col-storage">Storage</th>
+                <th class="col-office">Office</th>
+                <th class="col-lic-off">Lic.Off</th>
+                <th class="col-ip">IP Address</th>
+                <th class="col-host">Hostname</th>
+                <th class="col-cred">Credential</th>
             </tr>
         </thead>
         <tbody>
@@ -284,18 +207,11 @@
                         <td class="text-truncate"><?= esc($item->ipaddress ?: '-') ?></td>
                         <td class="text-truncate"><?= esc($item->hostname ?: '-') ?></td>
                         <td class="text-truncate"><?= esc($item->credential ?: '-') ?></td>
-                        <td class="text-truncate"><?= esc($item->monitor ?: '-') ?></td>
-                        <td class="text-truncate"><?= esc($item->keyboard ?: '-') ?></td>
-                        <td class="text-truncate"><?= esc($item->mouse ?: '-') ?></td>
-                        <td class="text-truncate"><?= esc($item->usb_converter ?: '-') ?></td>
-                        <td class="text-truncate"><?= esc($item->external_storage ?: '-') ?></td>
-                        <td class="text-truncate"><?= esc($item->printer ?: '-') ?></td>
-                        <td class="text-truncate"><?= esc($item->scanner ?: '-') ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="22" class="text-center" style="padding: 10px;">Tidak ada data inventory</td>
+                    <td colspan="15" class="text-center" style="padding: 10px;">Tidak ada data inventory</td>
                 </tr>
             <?php endif; ?>
         </tbody>

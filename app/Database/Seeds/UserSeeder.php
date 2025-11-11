@@ -21,6 +21,12 @@ class UserSeeder extends Seeder
                 'password_users' => password_hash('willbesit', PASSWORD_BCRYPT),
                 'createdat_users' => date("Y-m-d H:i:s"),
             ],
+            [
+                'nama_users'     => 'Guest User',
+                'email_users'    => 'guest@nirvana.co.id',
+                'password_users' => password_hash('willbesit', PASSWORD_BCRYPT),
+                'createdat_users' => date("Y-m-d H:i:s"),
+            ],
         ];
 
         $this->db->table('users')->insertBatch($data);

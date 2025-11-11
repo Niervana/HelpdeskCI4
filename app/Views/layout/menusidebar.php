@@ -9,9 +9,9 @@
 <li class="nav-item<?= ($currentSegment === 'inventory') ? ' active' : '' ?>">
     <a href="<?= base_url('inventory'); ?>" class="nav-link"><i class="fas fa-solid fa-server"></i> <span>Inventory</span></a>
 </li>
-<li class="nav-item<?= ($currentSegment === '-') ? ' active' : '' ?>">
+<!-- <li class="nav-item<?= ($currentSegment === '-') ? ' active' : '' ?>">
     <a href="<?= base_url('-'); ?>" class="nav-link"><i class="fas fa-solid fa-repeat"></i> <span>Device Exchange</span></a>
-</li>
+</li> -->
 
 
 <!-- old -->

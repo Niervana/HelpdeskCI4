@@ -16,33 +16,6 @@
     </div>
 
     <div class="section-body">
-        <!-- Header dengan Total dan Sort -->
-        <div class="mb-4 d-flex justify-content-between align-items-center">
-            <div><strong>Total Ticket: <?= $totalTicket ?></strong></div>
-            <div>
-                <label class="mr-2">Filter</label>
-                <div class="btn-group" role="group">
-                    <a href="<?= base_url('ticket?filter=today') ?>"
-                        class="btn btn-sm <?= $currentFilter == 'today' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                        Hari Ini
-                    </a>
-                    <a href="<?= base_url('ticket?filter=week') ?>"
-                        class="btn btn-sm <?= $currentFilter == 'week' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                        Minggu Ini
-                    </a>
-                    <a href="<?= base_url('ticket?filter=month') ?>"
-                        class="btn btn-sm <?= $currentFilter == 'month' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                        Bulan Ini
-                    </a>
-                    <a href="<?= base_url('ticket?filter=all') ?>"
-                        class="btn btn-sm <?= $currentFilter == 'all' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                        All
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
         <!-- Form Input Ticket -->
         <div class="card">
             <div class="card-header">
@@ -50,24 +23,36 @@
             </div>
             <div class="card-body">
                 <?php if (session()->getFlashdata('success')): ?>
-                    <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
+                    <script>
+                        iziToast.success({
+                            title: 'Success',
+                            message: '<?= session()->getFlashdata('success') ?>',
+                            position: 'topCenter',
+                            color: 'white',
+                            backgroundColor: '#fff'
+                        });
+                    </script>
                 <?php endif; ?>
 
                 <?php if (session()->getFlashdata('error')): ?>
-                    <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
+                    <script>
+                        iziToast.error({
+                            title: 'Error',
+                            message: '<?= session()->getFlashdata('error') ?>',
+                            position: 'topCenter',
+                            color: 'white',
+                            backgroundColor: '#fff'
+                        });
+                    </script>
                 <?php endif; ?>
 
-                <form action="<?= base_url('ticket/store') ?>" method="post">
+                <form action="<?= base_url('tiket') ?>" method="post">
                     <?= csrf_field() ?>
 
                     <div class="form-group">
                         <label for="nama">Nama Karyawan:</label>
                         <input type="text" class="form-control" id="nama" name="nama"
                             placeholder="Masukkan nama karyawan" required autocomplete="off">
-                        <div id="karyawan-suggestions" class="list-group" style="display: none;"></div>
-                        <small class="form-text text-muted">
-                            Departemen akan otomatis terisi berdasarkan nama karyawan
-                        </small>
                     </div>
                     <div class="form-group">
                         <label for="jenis_tiket">Jenis Tiket:</label>
@@ -77,25 +62,114 @@
                             <option value="Phone Trouble">Phone Trouble</option>
                             <option value="Password Trouble">Password Trouble</option>
                         </select>
-                        <div class="form-group">
-                            <label for="desk_tiket">Deskripsi Tiket:</label>
-                            <textarea class="form-control" id="desk_tiket" name="desk_tiket"
-                                rows="4" placeholder="Deskripsi masalah yang terjadi" required></textarea>
-                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="desk_tiket">Deskripsi Tiket:</label>
+                        <textarea class="form-control" id="desk_tiket" name="desk_tiket"
+                            rows="4" placeholder="Cobaan Hidup apa yang dia alami" required></textarea>
+                    </div>
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-upload"></i> Upload
-                            </button>
-                        </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload"></i> Upload
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <!-- Tabel Data Ticket -->
         <div class="card mt-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <strong>Total Ticket: <span id="totalTicketCount"><?= $totalTicket ?></span></strong>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="mr-2">Filter Tanggal:</label>
+                                <div class="btn-group btn-group-sm" role="group" data-filter-type="filter">
+                                    <a href="<?= base_url('tiket?filter=today&jenis=' . $currentJenisFilter) ?>"
+                                        class="btn filter-btn <?= $currentFilter == 'today' ? 'btn-primary' : 'btn-outline-primary' ?>"
+                                        data-filter="today"
+                                        title="Hari Ini">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </a>
+                                    <a href="<?= base_url('tiket?filter=week&jenis=' . $currentJenisFilter) ?>"
+                                        class="btn filter-btn <?= $currentFilter == 'week' ? 'btn-primary' : 'btn-outline-primary' ?>"
+                                        data-filter="week"
+                                        title="Minggu Ini">
+                                        <i class="fas fa-calendar-week"></i>
+                                    </a>
+                                    <a href="<?= base_url('tiket?filter=month&jenis=' . $currentJenisFilter) ?>"
+                                        class="btn filter-btn <?= $currentFilter == 'month' ? 'btn-primary' : 'btn-outline-primary' ?>"
+                                        data-filter="month"
+                                        title="Bulan Ini">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </a>
+                                    <a href="<?= base_url('tiket?filter=all&jenis=' . $currentJenisFilter) ?>"
+                                        class="btn filter-btn <?= $currentFilter == 'all' ? 'btn-primary' : 'btn-outline-primary' ?>"
+                                        data-filter="all"
+                                        title="All">
+                                        <i class="fas fa-calendar"></i>
+                                    </a>
+                                    <button type="button" class="btn <?= $currentFilter == 'custom' ? 'btn-primary' : 'btn-outline-primary' ?>" id="customDateFilter" title="Pilih Tanggal" data-toggle="modal" data-target="#dateRangeModal">
+                                        <i class="fas fa-calendar-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="mr-2">Filter Jenis:</label>
+                                <div class="btn-group btn-group-sm" role="group" data-filter-type="jenis">
+                                    <?php foreach ($jenisTiketList as $key => $value): ?>
+                                        <?php
+                                        $icon = '';
+                                        switch ($key) {
+                                            case 'all':
+                                                $icon = 'fas fa-list';
+                                                break;
+                                            case 'Software Trouble':
+                                                $icon = 'fas fa-code';
+                                                break;
+                                            case 'Hardware Trouble':
+                                                $icon = 'fas fa-cogs';
+                                                break;
+                                            case 'Phone Trouble':
+                                                $icon = 'fas fa-phone';
+                                                break;
+                                            case 'Password Trouble':
+                                                $icon = 'fas fa-key';
+                                                break;
+                                        }
+                                        ?>
+                                        <a href="<?= base_url('tiket?filter=' . $currentFilter . '&jenis=' . $key) ?>"
+                                            class="btn jenis-btn <?= $currentJenisFilter == $key ? 'btn-success' : 'btn-outline-success' ?>"
+                                            data-jenis="<?= $key ?>"
+                                            title="<?= $value ?>">
+                                            <i class="<?= $icon ?>"></i>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Data Ticket -->
             <div class="card-header">
                 <h4>Daftar Ticket</h4>
+                <div class="card-header-action">
+                    <a href="<?= base_url('tiket/print?filter=' . $currentFilter . '&jenis=' . $currentJenisFilter) ?>"
+                        class="btn btn-primary print-link <?php echo (isset($tiket) && !empty($tiket)) ? '' : 'disabled'; ?>"
+                        target="_blank">
+                        <i class="fas fa-print"></i> Print PDF
+                    </a>
+                    <a href="<?= base_url('tiket/excel?filter=' . $currentFilter . '&jenis=' . $currentJenisFilter) ?>"
+                        class="btn btn-success excel-link <?php echo (isset($tiket) && !empty($tiket)) ? '' : 'disabled'; ?>">
+                        <i class="fas fa-file-excel"></i> Export Excel
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -105,16 +179,15 @@
                                 <th>Date</th>
                                 <th>Nama</th>
                                 <th>Department</th>
-                                <th>User</th>
-                                <th>Troubleshooting</th>
+                                <th>Trouble</th>
                                 <th>Detail</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="ticketTableBody">
                             <?php if (empty($tiket)): ?>
                                 <tr>
-                                    <td colspan="7" class="text-center">Tidak ada data ticket</td>
+                                    <td colspan="6" class="text-center">Tidak ada data ticket</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($tiket as $ticket): ?>
@@ -122,19 +195,23 @@
                                         <td><?= date('d/m/Y H:i', strtotime($ticket['create_date'])) ?></td>
                                         <td><?= esc($ticket['nama_karyawan']) ?></td>
                                         <td><?= esc($ticket['departemen_karyawan']) ?></td>
-                                        <td>-</td>
-                                        <td><?= esc(substr($ticket['jenis_tiket'], 0, 50)) ?>...</td>
+                                        <td><?= esc($ticket['jenis_tiket']) ?></td>
                                         <td>
-                                            <a href="<?= base_url('ticket/detail/' . $ticket['tiket_id']) ?>"
+                                            <a href="<?= base_url('tiket/detail/' . $ticket['tiket_id']) ?>"
                                                 class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i> Detail
                                             </a>
                                         </td>
                                         <td>
-                                            <select class="form-control status-select" data-id="<?= $ticket['tiket_id'] ?>">
-                                                <option value="ongoing" <?= $ticket['status'] == 'ongoing' ? 'selected' : '' ?>>Ongoing</option>
-                                                <option value="solved" <?= $ticket['status'] == 'solved' ? 'selected' : '' ?>>Solved</option>
-                                            </select>
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input status-toggle"
+                                                    id="status-<?= $ticket['tiket_id'] ?>"
+                                                    data-id="<?= $ticket['tiket_id'] ?>"
+                                                    <?= $ticket['status'] == 'solved' ? 'checked disabled' : '' ?>>
+                                                <label class="custom-control-label" for="status-<?= $ticket['tiket_id'] ?>">
+                                                    <?= $ticket['status'] == 'solved' ? 'Solved' : 'Ongoing' ?>
+                                                </label>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -147,51 +224,261 @@
     </div>
 </section>
 
+<!-- Modal for Custom Date Range -->
+<div class="modal fade" id="dateRangeModal" tabindex="-1" role="dialog" aria-labelledby="dateRangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dateRangeModalLabel">Filter Berdasarkan Tanggal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="startDate">Tanggal Mulai:</label>
+                    <input type="date" class="form-control" id="startDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="endDate">Tanggal Akhir:</label>
+                    <input type="date" class="form-control" id="endDate" required>
+                </div>
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle"></i> Pilih rentang tanggal untuk memfilter data ticket.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-primary" id="applyDateRange">
+                    <i class="fas fa-check"></i> Terapkan Filter
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function() {
-        $('#nama').on('input', function() {
-            var term = $(this).val();
-            if (term.length >= 2) {
+        // Current filter values
+        let currentFilter = '<?= $currentFilter ?>';
+        let currentJenis = '<?= $currentJenisFilter ?>';
+        let customDateRange = null; // Store custom date range
+
+        // Function to load filtered data
+        function loadFilteredData(filter, jenis, startDate = null, endDate = null) {
+            let ajaxData = {
+                filter: filter,
+                jenis: jenis
+            };
+
+            // Add date range if custom filter
+            if (filter === 'custom' && startDate && endDate) {
+                ajaxData.start_date = startDate;
+                ajaxData.end_date = endDate;
+            }
+
+            $.ajax({
+                url: '<?= base_url('tiket/getFilteredData') ?>',
+                type: 'GET',
+                data: ajaxData,
+                beforeSend: function() {
+                    $('#ticketTableBody').html('<tr><td colspan="6" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>');
+                },
+                success: function(response) {
+                    // Update total ticket count
+                    $('#totalTicketCount').text(response.totalTicket);
+
+                    // Update table body
+                    let tbody = $('#ticketTableBody');
+                    tbody.empty();
+
+                    if (response.tiket.length === 0) {
+                        tbody.append('<tr><td colspan="6" class="text-center">Tidak ada data ticket</td></tr>');
+                    } else {
+                        response.tiket.forEach(function(ticket) {
+                            let isSolved = ticket.status == 'solved';
+                            let date = new Date(ticket.create_date);
+                            let formattedDate = date.toLocaleDateString('id-ID', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                            }) + ' ' + date.toLocaleTimeString('id-ID', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+
+                            let row = '<tr>' +
+                                '<td>' + formattedDate + '</td>' +
+                                '<td>' + escapeHtml(ticket.nama_karyawan) + '</td>' +
+                                '<td>' + escapeHtml(ticket.departemen_karyawan) + '</td>' +
+                                '<td>' + escapeHtml(ticket.jenis_tiket) + '</td>' +
+                                '<td><a href="<?= base_url('tiket/detail/') ?>' + ticket.tiket_id + '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Detail</a></td>' +
+                                '<td>' +
+                                '<div class="custom-control custom-switch">' +
+                                '<input type="checkbox" class="custom-control-input status-toggle" id="status-' + ticket.tiket_id + '" data-id="' + ticket.tiket_id + '" ' + (isSolved ? 'checked disabled' : '') + '>' +
+                                '<label class="custom-control-label" for="status-' + ticket.tiket_id + '">' +
+                                (isSolved ? 'Solved' : 'Ongoing') +
+                                '</label>' +
+                                '</div>' +
+                                '</td>' +
+                                '</tr>';
+                            tbody.append(row);
+                        });
+                    }
+
+                    // Update print and excel links
+                    let printUrl = '<?= base_url('tiket/print?filter=') ?>' + filter + '&jenis=' + jenis;
+                    let excelUrl = '<?= base_url('tiket/excel?filter=') ?>' + filter + '&jenis=' + jenis;
+
+                    // Add date range to URLs if custom filter
+                    if (filter === 'custom' && customDateRange) {
+                        printUrl += '&start_date=' + customDateRange.start + '&end_date=' + customDateRange.end;
+                        excelUrl += '&start_date=' + customDateRange.start + '&end_date=' + customDateRange.end;
+                    }
+
+                    $('.print-link').attr('href', printUrl);
+                    $('.excel-link').attr('href', excelUrl);
+
+                    // Enable/disable export buttons
+                    let hasData = response.tiket.length > 0;
+                    if (hasData) {
+                        $('.print-link, .excel-link').removeClass('disabled');
+                    } else {
+                        $('.print-link, .excel-link').addClass('disabled');
+                    }
+
+                    // Update current filter values
+                    currentFilter = filter;
+                    currentJenis = jenis;
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading data:', error);
+                    $('#ticketTableBody').html('<tr><td colspan="6" class="text-center text-danger">Gagal memuat data. Silakan refresh halaman.</td></tr>');
+                }
+            });
+        }
+
+        // Function to escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            let map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) {
+                return map[m];
+            });
+        }
+
+        // Handle filter date button clicks
+        $('.filter-btn').on('click', function(e) {
+            e.preventDefault();
+            let filterValue = $(this).data('filter');
+
+            // Reset custom date range when switching to preset filters
+            customDateRange = null;
+
+            // Update button states
+            $('.filter-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+            $('#customDateFilter').removeClass('btn-primary').addClass('btn-outline-primary');
+            $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+
+            // Update URL without reload
+            let currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('filter', filterValue);
+            currentUrl.searchParams.set('jenis', currentJenis);
+            currentUrl.searchParams.delete('start_date');
+            currentUrl.searchParams.delete('end_date');
+            window.history.pushState({}, '', currentUrl);
+
+            // Update all filter button hrefs
+            updateFilterButtonHrefs(filterValue, currentJenis);
+
+            // Load filtered data
+            loadFilteredData(filterValue, currentJenis);
+        });
+
+        // Handle filter jenis button clicks
+        $('.jenis-btn').on('click', function(e) {
+            e.preventDefault();
+            let jenisValue = $(this).data('jenis');
+
+            // Update button states
+            $('.jenis-btn').removeClass('btn-success').addClass('btn-outline-success');
+            $(this).removeClass('btn-outline-success').addClass('btn-success');
+
+            // Update URL without reload
+            let currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('filter', currentFilter);
+            currentUrl.searchParams.set('jenis', jenisValue);
+            window.history.pushState({}, '', currentUrl);
+
+            // Update all filter button hrefs
+            updateFilterButtonHrefs(currentFilter, jenisValue);
+
+            // Load filtered data with custom date if active
+            if (currentFilter === 'custom' && customDateRange) {
+                loadFilteredData(currentFilter, jenisValue, customDateRange.start, customDateRange.end);
+            } else {
+                loadFilteredData(currentFilter, jenisValue);
+            }
+        });
+
+        // Function to update all filter button hrefs
+        function updateFilterButtonHrefs(filterValue, jenisValue) {
+            // Update filter date buttons
+            $('.filter-btn').each(function() {
+                let btnFilter = $(this).data('filter');
+                $(this).attr('href', '<?= base_url('tiket?filter=') ?>' + btnFilter + '&jenis=' + jenisValue);
+            });
+
+            // Update filter jenis buttons
+            $('.jenis-btn').each(function() {
+                let btnJenis = $(this).data('jenis');
+                $(this).attr('href', '<?= base_url('tiket?filter=') ?>' + filterValue + '&jenis=' + btnJenis);
+            });
+        }
+
+        // Autocomplete for employee names
+        $('#nama').autocomplete({
+            source: function(request, response) {
                 $.ajax({
                     url: '<?= base_url('tiket/getKaryawan') ?>',
                     type: 'GET',
                     data: {
-                        term: term
+                        term: request.term
                     },
                     success: function(data) {
-                        var suggestions = $('#karyawan-suggestions');
-                        suggestions.empty();
-                        if (data.length > 0) {
-                            data.forEach(function(karyawan) {
-                                suggestions.append('<a href="#" class="list-group-item list-group-item-action karyawan-item" data-nama="' + karyawan.nama + '">' + karyawan.nama + ' - ' + karyawan.departemen + '</a>');
-                            });
-                            suggestions.show();
-                        } else {
-                            suggestions.hide();
-                        }
+                        response($.map(data, function(item) {
+                            return {
+                                label: item.nama_karyawan + ' - ' + item.departemen_karyawan,
+                                value: item.nama_karyawan
+                            };
+                        }));
                     }
                 });
-            } else {
-                $('#karyawan-suggestions').hide();
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                $('#nama').val(ui.item.value);
+                return false;
             }
         });
 
-        $(document).on('click', '.karyawan-item', function(e) {
-            e.preventDefault();
-            var nama = $(this).data('nama');
-            $('#nama').val(nama);
-            $('#karyawan-suggestions').hide();
-        });
-
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('#nama, #karyawan-suggestions').length) {
-                $('#karyawan-suggestions').hide();
+        // Handle status toggle with event delegation
+        $(document).on('change', '.status-toggle', function() {
+            if ($(this).prop('disabled')) {
+                return;
             }
-        });
 
-        $('.status-select').on('change', function() {
-            var id = $(this).data('id');
-            var status = $(this).val();
+            let id = $(this).data('id');
+            let status = $(this).is(':checked') ? 'solved' : 'ongoing';
+            let label = $(this).siblings('label');
+            let checkbox = $(this);
+
             $.ajax({
                 url: '<?= base_url('tiket/updateStatus/') ?>' + id,
                 type: 'POST',
@@ -201,65 +488,132 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        // Optional: Show success message or update UI
-                        console.log('Status updated successfully');
+                        label.text(status === 'solved' ? 'Solved' : 'Ongoing');
+                        if (status === 'solved') {
+                            checkbox.prop('disabled', true);
+                        }
+                        iziToast.success({
+                            title: 'Success',
+                            message: 'Status berhasil diupdate',
+                            position: 'topRight'
+                        });
                     } else {
-                        alert('Failed to update status');
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Gagal mengupdate status',
+                            position: 'topRight'
+                        });
+                        checkbox.prop('checked', !checkbox.is(':checked'));
                     }
+                },
+                error: function() {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Gagal mengupdate status',
+                        position: 'topRight'
+                    });
+                    checkbox.prop('checked', !checkbox.is(':checked'));
                 }
             });
         });
+
+        // Custom date filter - Open modal
+        $('#customDateFilter').on('click', function() {
+            // Set default dates (current month)
+            let today = new Date();
+            let firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            let lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+            // If custom date range exists, use it
+            if (customDateRange) {
+                $('#startDate').val(customDateRange.start);
+                $('#endDate').val(customDateRange.end);
+            } else {
+                $('#startDate').val(formatDateForInput(firstDay));
+                $('#endDate').val(formatDateForInput(lastDay));
+            }
+        });
+
+        // Apply custom date range filter
+        $('#applyDateRange').on('click', function() {
+            let startDate = $('#startDate').val();
+            let endDate = $('#endDate').val();
+
+            if (!startDate || !endDate) {
+                iziToast.warning({
+                    title: 'Perhatian',
+                    message: 'Silakan pilih tanggal mulai dan tanggal akhir',
+                    position: 'topRight'
+                });
+                return;
+            }
+
+            // Validate date range
+            if (new Date(startDate) > new Date(endDate)) {
+                iziToast.warning({
+                    title: 'Perhatian',
+                    message: 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir',
+                    position: 'topRight'
+                });
+                return;
+            }
+
+            // Store custom date range
+            customDateRange = {
+                start: startDate,
+                end: endDate
+            };
+
+            // Update button states - set custom filter as active
+            $('.filter-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+            $('#customDateFilter').removeClass('btn-outline-primary').addClass('btn-primary');
+
+            // Update URL
+            let currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('filter', 'custom');
+            currentUrl.searchParams.set('jenis', currentJenis);
+            currentUrl.searchParams.set('start_date', startDate);
+            currentUrl.searchParams.set('end_date', endDate);
+            window.history.pushState({}, '', currentUrl);
+
+            // Close modal
+            $('#dateRangeModal').modal('hide');
+
+            // Load filtered data with custom date range
+            loadFilteredData('custom', currentJenis, startDate, endDate);
+
+            iziToast.success({
+                title: 'Success',
+                message: 'Filter tanggal berhasil diterapkan',
+                position: 'topRight'
+            });
+        });
+
+        // Format date for input field (YYYY-MM-DD)
+        function formatDateForInput(date) {
+            let year = date.getFullYear();
+            let month = String(date.getMonth() + 1).padStart(2, '0');
+            let day = String(date.getDate()).padStart(2, '0');
+            return year + '-' + month + '-' + day;
+        }
+
+        // Check if page loaded with custom date filter
+        (function initCustomDateFilter() {
+            let urlParams = new URLSearchParams(window.location.search);
+            let filter = urlParams.get('filter');
+            let startDate = urlParams.get('start_date');
+            let endDate = urlParams.get('end_date');
+
+            if (filter === 'custom' && startDate && endDate) {
+                customDateRange = {
+                    start: startDate,
+                    end: endDate
+                };
+                $('.filter-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+                $('#customDateFilter').removeClass('btn-outline-primary').addClass('btn-primary');
+            }
+        })();
     });
 </script>
 
-<!-- <div class="section-header">
-        <h1>Tickets</h1>
-    </div>
-
-    <div class="section-body">
-        <div class="mb-4 d-flex justify-content-between align-items-center">
-            <div><strong>Total Ticket: 0</strong></div>
-            <div>Sort : date / month / year</div>
-        </div>
-
-        <form action="" method="post" style="max-width: 600px;">
-            <div class="form-group mb-3">
-                <label for="date">Input date:</label>
-                <input type="date" class="form-control" id="date" name="date" placeholder="Select date" required>
-            </div>
-            <div class="form-group mb-3">
-                <label for="name">Input name:</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" required>
-            </div>
-            <div class="form-group mb-3">
-                <label for="trouble">Input trouble:</label>
-                <textarea class="form-control" id="trouble" name="trouble" rows="4" placeholder="Describe trouble" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Upload</button>
-        </form>
-
-        <hr class="my-5">
-
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Name</th>
-                        <th>Depart</th>
-                        <th>Device</th>
-                        <th>Trouble</th>
-                        <th>Photo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    Data rows akan di-loop di sini
-                    <tr>
-                        <td colspan="6" class="text-center">No data available</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</section> -->
 <?= $this->endSection() ?>

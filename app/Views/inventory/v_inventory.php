@@ -39,7 +39,15 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <a href="<?php echo site_url('inventory/print'); ?>" class="btn btn-primary <?php echo (isset($inventory) && !empty($inventory)) ? '' : 'disabled'; ?>" target="_blank"><i class="fas fa-print"></i> Print</a>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-primary dropdown-toggle <?php echo (isset($inventory) && !empty($inventory)) ? '' : 'disabled'; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-print"></i> Print
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="<?php echo site_url('inventory/print-main'); ?>" target="_blank">Print Main Device</a>
+                                        <a class="dropdown-item" href="<?php echo site_url('inventory/print-support'); ?>" target="_blank">Print Support Device</a>
+                                    </div>
+                                </div>
                                 <a href="<?php echo site_url('inventory/excel'); ?>" class="btn btn-success <?php echo (isset($inventory) && !empty($inventory)) ? '' : 'disabled'; ?>"><i class="fas fa-file-excel"></i> Excel</a>
                                 <a href="<?php echo site_url('inventory/log'); ?>" class="btn btn-dark"><i class="fas fa-file"></i> Log</a>
                             </div>

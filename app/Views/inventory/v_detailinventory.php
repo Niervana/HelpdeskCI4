@@ -40,7 +40,10 @@
                             <h6>CPU: <?php echo $inventory->cpu ?: '-'; ?></h6>
                             <h6>RAM: <?php echo $inventory->ram ?: '-'; ?></h6>
                             <h6>OS: <?php echo $inventory->os ?: '-'; ?></h6>
-                            <h6>Lisensi: <?php echo $inventory->lisensi ?: '-'; ?></h6>
+                            <h6>Lisensi Windows: <?php echo $inventory->lisensi_windows ?: '-'; ?></h6>
+                            <h6>Storage: <?php echo $inventory->storage ?: '-'; ?></h6>
+                            <h6>Office: <?php echo $inventory->office ?: '-'; ?></h6>
+                            <h6>Lisensi Office: <?php echo $inventory->lisensi_office ?: '-'; ?></h6>
                             <h6>IP Address: <?php echo $inventory->ipaddress ?: '-'; ?></h6>
                             <h6>Hostname: <?php echo $inventory->hostname ?: '-'; ?></h6>
                             <h6>Credential: <?php echo $inventory->credential ?: '-'; ?></h6>
@@ -51,6 +54,8 @@
                             <h6>Mouse: <?php echo $inventory->mouse ?: '-'; ?></h6>
                             <h6>USB Converter: <?php echo $inventory->usb_converter ?: '-'; ?></h6>
                             <h6>External Storage: <?php echo $inventory->external_storage ?: '-'; ?></h6>
+                            <h6>Printer: <?php echo $inventory->printer ?: '-'; ?></h6>
+                            <h6>Scanner: <?php echo $inventory->scanner ?: '-'; ?></h6>
                         </div>
                     </div>
                 </div>

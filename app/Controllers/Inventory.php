@@ -49,7 +49,10 @@ class Inventory extends BaseController
             'cpu' => $data['cpu'],
             'ram' => $data['ram'],
             'os' => $data['os'],
-            'lisensi' => $data['lisensi'],
+            'lisensi_windows' => $data['lisensi_windows'],
+            'storage' => $data['storage'],
+            'office' => $data['office'],
+            'lisensi_office' => $data['lisensi_office'],
             'ipaddress' => $data['ipaddress'],
             'hostname' => $data['hostname'],
             'credential' => $data['credential']
@@ -63,7 +66,9 @@ class Inventory extends BaseController
             'keyboard' => $data['keyboard'],
             'mouse' => $data['mouse'],
             'usb_converter' => $data['usb_converter'],
-            'external_storage' => $data['external_storage']
+            'external_storage' => $data['external_storage'],
+            'printer' => $data['printer'],
+            'scanner' => $data['scanner']
         ];
         $this->db->table('supportdevice')->insert($supportDeviceData);
         $supportId = $this->db->insertID();
@@ -203,7 +208,10 @@ class Inventory extends BaseController
             'cpu' => $current->cpu,
             'ram' => $current->ram,
             'os' => $current->os,
-            'lisensi' => $current->lisensi,
+            'lisensi_windows' => $current->lisensi_windows,
+            'storage' => $current->storage,
+            'office' => $current->office,
+            'lisensi_office' => $current->lisensi_office,
             'ipaddress' => $current->ipaddress,
             'hostname' => $current->hostname,
             'credential' => $current->credential,
@@ -211,7 +219,9 @@ class Inventory extends BaseController
             'keyboard' => $current->keyboard,
             'mouse' => $current->mouse,
             'usb_converter' => $current->usb_converter,
-            'external_storage' => $current->external_storage
+            'external_storage' => $current->external_storage,
+            'printer' => $current->printer,
+            'scanner' => $current->scanner
         ];
 
         // Update karyawan table
@@ -228,7 +238,10 @@ class Inventory extends BaseController
             'cpu' => $data['cpu'],
             'ram' => $data['ram'],
             'os' => $data['os'],
-            'lisensi' => $data['lisensi'],
+            'lisensi_windows' => $data['lisensi_windows'],
+            'storage' => $data['storage'],
+            'office' => $data['office'],
+            'lisensi_office' => $data['lisensi_office'],
             'ipaddress' => $data['ipaddress'],
             'hostname' => $data['hostname'],
             'credential' => $data['credential']
@@ -241,7 +254,9 @@ class Inventory extends BaseController
             'keyboard' => $data['keyboard'],
             'mouse' => $data['mouse'],
             'usb_converter' => $data['usb_converter'],
-            'external_storage' => $data['external_storage']
+            'external_storage' => $data['external_storage'],
+            'printer' => $data['printer'],
+            'scanner' => $data['scanner']
         ];
         $this->db->table('supportdevice')->where('support_id', $current->support_id)->update($supportDeviceData);
 
@@ -254,7 +269,10 @@ class Inventory extends BaseController
             'cpu' => $mainDeviceData['cpu'],
             'ram' => $mainDeviceData['ram'],
             'os' => $mainDeviceData['os'],
-            'lisensi' => $mainDeviceData['lisensi'],
+            'lisensi_windows' => $mainDeviceData['lisensi_windows'],
+            'storage' => $mainDeviceData['storage'],
+            'office' => $mainDeviceData['office'],
+            'lisensi_office' => $mainDeviceData['lisensi_office'],
             'ipaddress' => $mainDeviceData['ipaddress'],
             'hostname' => $mainDeviceData['hostname'],
             'credential' => $mainDeviceData['credential'],
@@ -262,7 +280,9 @@ class Inventory extends BaseController
             'keyboard' => $supportDeviceData['keyboard'],
             'mouse' => $supportDeviceData['mouse'],
             'usb_converter' => $supportDeviceData['usb_converter'],
-            'external_storage' => $supportDeviceData['external_storage']
+            'external_storage' => $supportDeviceData['external_storage'],
+            'printer' => $supportDeviceData['printer'],
+            'scanner' => $supportDeviceData['scanner']
         ];
 
         // Log the action
@@ -296,7 +316,10 @@ class Inventory extends BaseController
                 'cpu' => $current->cpu,
                 'ram' => $current->ram,
                 'os' => $current->os,
-                'lisensi' => $current->lisensi,
+                'lisensi_windows' => $current->lisensi_windows,
+                'storage' => $current->storage,
+                'office' => $current->office,
+                'lisensi_office' => $current->lisensi_office,
                 'ipaddress' => $current->ipaddress,
                 'hostname' => $current->hostname,
                 'credential' => $current->credential,
@@ -304,7 +327,9 @@ class Inventory extends BaseController
                 'keyboard' => $current->keyboard,
                 'mouse' => $current->mouse,
                 'usb_converter' => $current->usb_converter,
-                'external_storage' => $current->external_storage
+                'external_storage' => $current->external_storage,
+                'printer' => $current->printer,
+                'scanner' => $current->scanner
             ];
 
             // Log the action before deleting
@@ -356,23 +381,48 @@ class Inventory extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
     }
-
-    public function print()
+    public function printMain()
     {
         $model = new InventoryModel();
         $data['inventory'] = $model->getAllInventory();
-        if (empty($data['inventory'])) {
-            return redirect()->to(site_url('inventory'))->with('error', 'Tidak ada data untuk dicetak');
-        }
 
-        // Load dompdf
         $dompdf = new \Dompdf\Dompdf();
-        $html = view('inventory/v_print_inventory', $data);
+        $html = view('inventory/v_print_inventory_main', $data);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
-        $dompdf->stream('data_inventory.pdf', array('Attachment' => 0));
+        $dompdf->stream('data_inventory_main_device.pdf', array('Attachment' => 0));
     }
+
+    public function printSupport()
+    {
+        $model = new InventoryModel();
+        $data['inventory'] = $model->getAllInventory();
+
+        $dompdf = new \Dompdf\Dompdf();
+        $html = view('inventory/v_print_inventory_support', $data);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+        $dompdf->stream('data_inventory_support_device.pdf', array('Attachment' => 0));
+    }
+    // old ver
+    // public function print()
+    // {
+    //     $model = new InventoryModel();
+    //     $data['inventory'] = $model->getAllInventory();
+    //     if (empty($data['inventory'])) {
+    //         return redirect()->to(site_url('inventory'))->with('error', 'Tidak ada data untuk dicetak');
+    //     }
+
+    //     // Load dompdf
+    //     $dompdf = new \Dompdf\Dompdf();
+    //     $html = view('inventory/v_print_inventory', $data);
+    //     $dompdf->loadHtml($html);
+    //     $dompdf->setPaper('A4', 'landscape');
+    //     $dompdf->render();
+    //     $dompdf->stream('data_inventory.pdf', array('Attachment' => 0));
+    // }
 
     public function excel()
     {
@@ -389,22 +439,54 @@ class Inventory extends BaseController
         $output = fopen('php://output', 'w');
 
         // Write CSV header
-        fputcsv($output, ['Nama Karyawan', 'Departemen', 'Main Device', 'Support Device']);
+        fputcsv($output, [
+            'Nama Karyawan',
+            'Departemen',
+            'Manufaktur',
+            'Jenis',
+            'CPU',
+            'RAM',
+            'OS',
+            'Lisensi Windows',
+            'Storage',
+            'Office',
+            'Lisensi Office',
+            'IP Address',
+            'Hostname',
+            'Credential',
+            'Monitor',
+            'Keyboard',
+            'Mouse',
+            'USB Converter',
+            'External Storage',
+            'Printer',
+            'Scanner'
+        ]);
 
         // Write data rows
         foreach ($inventory as $item) {
-            $mainDevice = $item->manufaktur ? $item->manufaktur . ' ' . $item->jenis . ' (' . $item->cpu . ', ' . $item->ram . ', ' . $item->os . ')' : '-';
-            $support = [];
-            if ($item->monitor) $support[] = 'Monitor';
-            if ($item->keyboard) $support[] = 'Keyboard';
-            if ($item->mouse) $support[] = 'Mouse';
-            $supportDevice = implode(', ', $support) ?: '-';
-
             fputcsv($output, [
-                $item->nama_karyawan,
-                $item->departemen_karyawan,
-                $mainDevice,
-                $supportDevice
+                $item->nama_karyawan ?: '-',
+                $item->departemen_karyawan ?: '-',
+                $item->manufaktur ?: '-',
+                $item->jenis ?: '-',
+                $item->cpu ?: '-',
+                $item->ram ?: '-',
+                $item->os ?: '-',
+                $item->lisensi_windows ?: '-',
+                $item->storage ?: '-',
+                $item->office ?: '-',
+                $item->lisensi_office ?: '-',
+                $item->ipaddress ?: '-',
+                $item->hostname ?: '-',
+                $item->credential ?: '-',
+                $item->monitor ?: '-',
+                $item->keyboard ?: '-',
+                $item->mouse ?: '-',
+                $item->usb_converter ?: '-',
+                $item->external_storage ?: '-',
+                $item->printer ?: '-',
+                $item->scanner ?: '-'
             ]);
         }
 

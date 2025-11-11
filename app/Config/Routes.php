@@ -59,7 +59,8 @@ $routes->put('inventory/update/(:num)', 'Inventory::update/$1');
 $routes->delete('inventory/(:num)', 'Inventory::delete/$1');
 $routes->get('inventory/detail/(:num)', 'Inventory::show_detail/$1');
 $routes->post('inventory/import', 'Inventory::import');
-$routes->get('inventory/print', 'Inventory::print');
+$routes->get('inventory/print-main', 'Inventory::printMain');
+$routes->get('inventory/print-support', 'Inventory::printSupport');
 $routes->get('inventory/excel', 'Inventory::excel');
 $routes->get('inventory/log', 'Inventory::log');
 
@@ -83,9 +84,12 @@ $routes->get('account/move/(:num)', 'Account::move/$1');
 //-----------------------------------------------------------
 // tiketing
 $routes->get('tiket', 'Tiket::index');
-$routes->get('tiket/reply', 'Tiket::reply');
-$routes->post('tiket', 'Tiket::insert');
+$routes->post('tiket', 'Tiket::store');
 $routes->delete('tiket(:segment)', 'Tiket::delete/$1');
+$routes->get('tiket/detail/(:num)', 'Tiket::detail/$1');
+$routes->get('tiket/print', 'Tiket::print');
+$routes->get('tiket/excel', 'Tiket::excel');
+$routes->get('tiket/getFilteredData', 'Tiket::getFilteredData');
 //-----------------------------------------------------------
 // PKL
 // $routes->get('pkl', 'PKL::index');

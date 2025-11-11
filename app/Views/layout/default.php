@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="<?= base_url() ?>/fonta/css/all.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>/template/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.css" />
     <link rel="stylesheet" href="<?= base_url() ?>/template/node_modules/izitoast/dist/css/iziToast.min.css">
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- CSS Libraries -->
 
     <!-- Template CSS -->
@@ -99,7 +101,7 @@
             </div>
             <footer class="main-footer">
                 <div class="footer-left">
-                    Copyright &copy; 2023 <div class="bullet"></div> Developed By <a href="#">Nirvana Rahadian</a>
+                    Copyright &copy; 2025 <div class="bullet"></div> Developed By <a href="#">Nirvana Rahadian</a>
                     <a href="https://instagram.com/nirvhd"><i class="fa-brands fa-instagram"></i></a>
                     <a href="mailto:kharismanirvana@gmail.com"><i class="fa-regular fa-envelope"></i></a>
                 </div>
@@ -138,6 +140,8 @@
     <script src="<?= base_url() ?>/template/assets/js/scripts.js"></script>
     <script src="<?= base_url() ?>/template/assets/js/custom.js"></script>
     <script src="<?= base_url() ?>/template/assets/js/stisla.js"></script>
+    <!-- jQuery UI JS -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
     <!-- General JS Scripts -->
     <script>
