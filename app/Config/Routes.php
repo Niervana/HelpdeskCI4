@@ -64,6 +64,15 @@ $routes->get('inventory/print-support', 'Inventory::printSupport');
 $routes->get('inventory/excel', 'Inventory::excel');
 $routes->get('inventory/log', 'Inventory::log');
 
+// CCTV routes
+$routes->get('cctv', 'Cctv::index');
+$routes->get('cctv/add', 'Cctv::add');
+$routes->post('cctv/insert', 'Cctv::insert');
+$routes->get('cctv/edit/(:num)', 'Cctv::edit/$1');
+$routes->put('cctv/update/(:num)', 'Cctv::update/$1');
+$routes->delete('cctv/(:num)', 'Cctv::delete/$1');
+$routes->get('cctv/detail/(:num)', 'Cctv::show_detail/$1');
+
 // ----------------------------------------------------------
 // kontrak
 // $routes->get('kontrak', 'Kontrak::index');

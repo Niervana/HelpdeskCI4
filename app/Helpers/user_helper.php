@@ -4,5 +4,6 @@
 function userLogin()
 {
     $db = \Config\Database::connect();
-    return  $db->table('users')->where('id_users', session('id_users'))->get()->getRow();
+    $user = $db->table('users')->where('id_users', session('id_users'))->get()->getRow();
+    return $user ?: null;
 }

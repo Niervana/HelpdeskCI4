@@ -5,8 +5,6 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <?= $this->renderSection('title') ?>
-    <!-- <title>Blank Page &mdash; Stisla</title> -->
-
     <!-- General CSS Files -->
     <!-- client side css -->
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
@@ -56,20 +54,10 @@
                 <ul class="navbar-nav navbar-right">
                     <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                             <img alt="image" src="<?= base_url() ?>/template/assets/img/avatar/avatar-1.png" class="rounded-circle mr-1">
-                            <div class="d-sm-none d-lg-inline-block"><?= userLogin()->nama_users ?></div>
+                            <div class="d-sm-none d-lg-inline-block"><?= userLogin() ? userLogin()->nama_users : 'Guest' ?></div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <div class="dropdown-title">Hallo <?= userLogin()->nama_users ?></div>
-                            <!-- <a href="features-profile.html" class="dropdown-item has-icon">
-                                <i class="far fa-user"></i> Profile
-                            </a>
-
-                            <a href="features-activities.html" class="dropdown-item has-icon">
-                                <i class="fas fa-bolt"></i> Activities
-                            </a>
-                            <a href="features-settings.html" class="dropdown-item has-icon">
-                                <i class="fas fa-cog"></i> Settings
-                            </a> -->
+                            <div class="dropdown-title">Hallo <?= userLogin() ? userLogin()->nama_users : 'Guest' ?></div>
                             <div class="dropdown-divider"></div>
                             <a href="<?= site_url('Auth/logout') ?>" class="dropdown-item has-icon text-danger">
                                 <i class="fas fa-sign-out-alt"></i> Logout

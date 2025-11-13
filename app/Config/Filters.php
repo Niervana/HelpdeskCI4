@@ -64,18 +64,31 @@ class Filters extends BaseConfig
      * 'isLoggedIn' => ['before' => ['account/*', 'profiles/*']]
      */
     public array $filters = [
+        'csrf' => [
+            'except' => ['login', 'Auth/loginProcess']
+        ],
         'isLoggedIn' => [
-            'before' =>
-            [
+            'before' => [
+                '/',
                 'Home',
-                'Karyawan', 'Karyawan/*',
-                'PKL', 'PKL/*',
-                'Kontrak', 'Kontrak/*',
-                'Account', 'Account/*',
-                'Tiket', 'Tiket/*',
-                'Timesheets', 'Timesheets/*'
-
-            ]
+                'Karyawan',
+                'Karyawan/*',
+                'PKL',
+                'PKL/*',
+                'Kontrak',
+                'Kontrak/*',
+                'Account',
+                'Account/*',
+                'Tiket',
+                'Tiket/*',
+                'Timesheets',
+                'Timesheets/*',
+                'Inventory',
+                'Inventory/*',
+                'Cctv',
+                'Cctv/*'
+            ],
+            'except' => ['auth/*', 'login', 'register', 'forgot', 'verifikasi']
         ]
     ];
 }
