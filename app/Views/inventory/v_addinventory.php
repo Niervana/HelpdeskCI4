@@ -37,6 +37,14 @@
                                 <label>Departemen*</label>
                                 <input type="text" name="departemen_karyawan" class="form-control" required>
                             </div>
+                            <div class="form-group">
+                                <label>Email*</label>
+                                <input type="email" name="email_users" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Password*</label>
+                                <input type="password" name="password_users" class="form-control" required>
+                            </div>
                         </div>
                     </div>
                     <div class="card flex-fill d-flex flex-column">
@@ -96,7 +104,7 @@
                             </div>
                             <div class="form-group">
                                 <label>RAM</label>
-                                <input type="text" name="ram" class="form-control">
+                                <input type="number" name="ram" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label>OS</label>
@@ -108,7 +116,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Storage</label>
-                                <input type="text" name="storage" class="form-control">
+                                <input type="number" name="storage" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label>Office</label>

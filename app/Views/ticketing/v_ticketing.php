@@ -56,22 +56,23 @@
                     </div>
                     <div class="form-group">
                         <label for="jenis_tiket">Jenis Tiket:</label>
-                        <select class="form-control" id="jenis_tiket" name="jenis_tiket">
+                        <select class="form-control" id="jenis_tiket" name="jenis_tiket" required>
                             <option value="Software Trouble">Software Trouble</option>
                             <option value="Hardware Trouble">Hardware Trouble</option>
                             <option value="Phone Trouble">Phone Trouble</option>
                             <option value="Password Trouble">Password Trouble</option>
+                            <option value="Network Trouble">Network Trouble</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="desk_tiket">Deskripsi Tiket:</label>
                         <textarea class="form-control" id="desk_tiket" name="desk_tiket"
-                            rows="4" placeholder="Cobaan Hidup apa yang dia alami" required></textarea>
+                            rows="4" placeholder="Jelaskan masalah yang dialami karyawan" required></textarea>
                     </div>
 
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-upload"></i> Upload
+                            <i class="fas fa-upload"></i> Kirim Tiket
                         </button>
                     </div>
                 </form>
@@ -139,6 +140,9 @@
                                                 break;
                                             case 'Password Trouble':
                                                 $icon = 'fas fa-key';
+                                                break;
+                                            case 'Network Trouble':
+                                                $icon = 'fas fa-wifi';
                                                 break;
                                         }
                                         ?>

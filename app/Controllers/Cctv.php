@@ -128,4 +128,64 @@ class Cctv extends BaseController
 
         return view('cctv/v_detailcctv', $data);
     }
+
+    public function print()
+    {
+        $cctv = $this->cctvModel->findAll();
+
+        if (empty($cctv)) {
+            return redirect()->to(site_url('cctv'))->with('error', 'Tidak ada data untuk dicetak');
+        }
+
+        $data['cctv'] = $cctv;
+
+        // Load dompdf
+        $dompdf = new \Dompdf\Dompdf();
+        $html = view('cctv/v_print_cctv', $data);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+
+        $filename = 'data_cctv_' . date('Ymd') . '.pdf';
+        $dompdf->stream($filename, array('Attachment' => 0));
+    }
+
+    public function excel()
+    {
+        $cctv = $this->cctvModel->findAll();
+
+        if (empty($cctv)) {
+            return redirect()->to(site_url('cctv'))->with('error', 'Tidak ada data untuk diekspor');
+        }
+
+        $filename = 'data_cctv_' . date('Ymd') . '.csv';
+
+        // Set headers for CSV download
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $output = fopen('php://output', 'w');
+
+        // Write CSV header
+        fputcsv($output, ['No', 'Lokasi', 'Tipe Kamera', 'Merk', 'Model', 'Serial Number', 'IP Address', 'Status', 'Keterangan']);
+
+        // Write data rows
+        $no = 1;
+        foreach ($cctv as $item) {
+            fputcsv($output, [
+                $no++,
+                $item['lokasi'],
+                $item['tipe_kamera'],
+                $item['merk'],
+                $item['model'],
+                $item['serial_number'],
+                $item['ip_address'],
+                $item['status'],
+                $item['keterangan'] ?? ''
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
 }

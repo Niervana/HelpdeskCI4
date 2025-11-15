@@ -51,7 +51,8 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <!-- Excel export functionality can be added later if needed -->
+                                <a href="<?= site_url('cctv/print') ?>" class="btn btn-danger" target="_blank"><i class="fas fa-file-pdf"></i> Print PDF</a>
+                                <a href="<?= site_url('cctv/excel') ?>" class="btn btn-success"><i class="fas fa-file-excel"></i> Export Excel</a>
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -139,6 +140,11 @@
 <?= $this->section('script') ?>
 <script type="text/javascript">
     $(document).ready(function() {
+        // Destroy existing DataTable if it exists
+        if ($.fn.DataTable.isDataTable('#nirvana')) {
+            $('#nirvana').DataTable().destroy();
+        }
+
         $('#nirvana').DataTable({
             "pageLength": 25,
             "responsive": true,

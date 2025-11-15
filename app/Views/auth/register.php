@@ -70,16 +70,14 @@ use App\Controllers\Auth;
                             <div class="card-body">
                                 <form action="<?= site_url('register') ?>" method="post" autocomplete="off" onsubmit="return validatePassword();">
                                     <?= csrf_field() ?>
-                                    <div class="row">
-                                        <div class="form-group col-6">
-                                            <label>ID Karyawan</label>
-                                            <input type="text" class="form-control" name="id_karyawan">
-                                        </div>
-                                        <div class="form-group col-6">
-                                            <label>Nama</label>
-                                            <input type="text" class="form-control" name="nama_users">
-                                            <input type="hidden" class="form-control" name="role" value="2">
-                                        </div>
+                                    <div class="form-group">
+                                        <label>Nama</label>
+                                        <input type="text" class="form-control" name="nama" required>
+                                        <input type="hidden" name="role" value="2">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Departemen</label>
+                                        <input type="text" class="form-control" name="departemen_karyawan" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Email</label>

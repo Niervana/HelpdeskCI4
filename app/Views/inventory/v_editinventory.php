@@ -38,6 +38,14 @@
                                     <label>Departemen*</label>
                                     <input type="text" name="departemen_karyawan" value="<?= $inventory->departemen_karyawan ?>" class="form-control" required>
                                 </div>
+                                <div class="form-group">
+                                    <label>Email*</label>
+                                    <input type="email" name="email_users" value="<?= $inventory->email_users ?>" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Password*</label>
+                                    <input type="password" name="password_users" value="<?= $inventory->password_users ?>" class="form-control" required>
+                                </div>
                             </div>
                         </div>
                         <div class="card flex-fill d-flex flex-column">
@@ -97,7 +105,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>RAM</label>
-                                    <input type="text" name="ram" value="<?= $inventory->ram ?>" class="form-control">
+                                    <input type="number" name="ram" value="<?= $inventory->ram ?>" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>OS</label>
@@ -109,7 +117,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Storage</label>
-                                    <input type="text" name="storage" value="<?= $inventory->storage ?>" class="form-control">
+                                    <input type="number" name="storage" value="<?= $inventory->storage ?>" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>Office</label>

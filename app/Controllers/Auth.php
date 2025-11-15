@@ -23,39 +23,6 @@ class Auth extends BaseController
         }
         return view('auth/login');
     }
-    // public function loginProcess()
-    // {
-    //     $post = $this->request->getPost();
-    //     $query = $this->db->table('users')->getWhere(['email_users' => $post['email']]);
-    //     $user = $query->getRow();
-
-    //     if ($user) {
-    //         if ($user->role == 1) {
-    //             if (password_verify($post['password'], $user->password_users)) {
-    //                 $params = ['id_users' => $user->id_users];
-    //                 session()->set($params);
-    //                 return redirect()->to(site_url('Home'));
-    //             } else {
-    //                 session()->setFlashdata('email_users', $post['email']);
-    //                 session()->setFlashdata('error', 'Password salah');
-    //                 return redirect()->back()->withInput();
-    //             }
-    //         } else {
-    //             if ($post['password'] === $user->password_users) {
-    //                 $params = ['id_users' => $user->id_users];
-    //                 session()->set($params);
-    //                 return redirect()->to(site_url('Home'));
-    //             } else {
-    //                 session()->setFlashdata('email_users', $post['email']);
-    //                 session()->setFlashdata('error', 'Password salah');
-    //                 return redirect()->back()->withInput();
-    //             }
-    //         }
-    //     } else {
-    //         session()->setFlashdata('error', 'Email salah');
-    //         return redirect()->back()->withInput();
-    //     }
-    // }
     public function loginProcess()
     {
         $post = $this->request->getPost();
@@ -65,8 +32,15 @@ class Auth extends BaseController
         $user = $query->getRow();
 
         if ($user) {
-            // Verifikasi password terenkripsi (bcrypt)
-            if (password_verify($post['password'], $user->password_users)) {
+            // Verifikasi password: hash untuk admin (role=1), plain untuk user (role=2)
+            $passwordValid = false;
+            if ($user->role == 1) {
+                $passwordValid = password_verify($post['password'], $user->password_users);
+            } elseif ($user->role == 2) {
+                $passwordValid = ($post['password'] === $user->password_users);
+            }
+
+            if ($passwordValid) {
                 $params = ['id_users' => $user->id_users];
                 session()->set($params);
                 return redirect()->to(site_url('Home'));
@@ -86,14 +60,11 @@ class Auth extends BaseController
         session()->remove('id_users');
         return redirect()->to(site_url('login'));
     }
-    // public function forgot()
-    // {
-    //     return view('auth/forgot');
-    // }
-    // public function register()
-    // {
-    //     return view('auth/register');
-    // }
+
+    public function register()
+    {
+        return view('auth/register');
+    }
     public function verifikasi()
     {
         return view('auth/keterangan');
@@ -101,7 +72,34 @@ class Auth extends BaseController
     public function insertdata()
     {
         $data = $this->request->getPost();
-        $this->db->table('users2')->insert($data);
+
+        // Insert ke users: nama_users, email_users, password_users (plain for role=2), createdat_users, role
+        $userData = [
+            'nama_users' => $data['nama'],
+            'email_users' => $data['email_users'],
+            'password_users' => $data['password_users'], // plain text for users
+            'createdat_users' => $data['createdat_users'],
+            'role' => $data['role'],
+        ];
+        $this->db->table('users')->insert($userData);
+        $userId = $this->db->insertID();
+
+        // Insert ke karyawan: nama_karyawan, departemen_karyawan
+        $karyawanData = [
+            'nama_karyawan' => $data['nama'],
+            'departemen_karyawan' => $data['departemen_karyawan'],
+        ];
+        $this->db->table('karyawan')->insert($karyawanData);
+        $karyawanId = $this->db->insertID();
+
+        // Insert ke inventory: karyawan_id (dengan main_id dan support_id null)
+        $inventoryData = [
+            'karyawan_id' => $karyawanId,
+            'main_id' => null,
+            'support_id' => null,
+        ];
+        $this->db->table('inventory')->insert($inventoryData);
+
         if ($this->db->affectedRows() > 0) {
             return redirect()->to(site_url('auth/verifikasi'));
         }

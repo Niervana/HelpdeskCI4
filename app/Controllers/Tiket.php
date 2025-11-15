@@ -21,48 +21,66 @@ class Tiket extends BaseController
 
     public function index()
     {
-        $filter = $this->request->getGet('filter') ?? 'today';
-        $jenisFilter = $this->request->getGet('jenis') ?? 'all';
-        $startDate = $this->request->getGet('start_date');
-        $endDate = $this->request->getGet('end_date');
+        $user = userLogin();
+        if ($user && $user->role == 1) {
+            // Admin view - existing logic
+            $filter = $this->request->getGet('filter') ?? 'today';
+            $jenisFilter = $this->request->getGet('jenis') ?? 'all';
+            $startDate = $this->request->getGet('start_date');
+            $endDate = $this->request->getGet('end_date');
 
-        // Hitung tanggal berdasarkan filter
-        $dateCondition = $this->getDateCondition($filter, $startDate, $endDate);
+            // Hitung tanggal berdasarkan filter
+            $dateCondition = $this->getDateCondition($filter, $startDate, $endDate);
 
-        // Ambil data tiket dengan join ke tabel karyawan
-        $query = $this->TiketModel
-            ->select('tiket.*, nama_karyawan, departemen_karyawan')
-            ->join('karyawan', 'karyawan.karyawan_id = tiket.karyawan_id')
-            ->where($dateCondition);
+            // Ambil data tiket dengan join ke tabel karyawan
+            $query = $this->TiketModel
+                ->select('tiket.*, nama_karyawan, departemen_karyawan')
+                ->join('karyawan', 'karyawan.karyawan_id = tiket.karyawan_id')
+                ->where($dateCondition);
 
-        // Tambahkan filter jenis tiket jika bukan 'all'
-        if ($jenisFilter !== 'all') {
-            $query->where('tiket.jenis_tiket', $jenisFilter);
+            // Tambahkan filter jenis tiket jika bukan 'all'
+            if ($jenisFilter !== 'all') {
+                $query->where('tiket.jenis_tiket', $jenisFilter);
+            }
+
+            $tiket = $query->orderBy('tiket.create_date', 'DESC')->findAll();
+
+            // Ambil semua data karyawan untuk datalist
+            $karyawanList = $this->InventoryModel->findAll();
+
+            // Daftar jenis tiket untuk filter
+            $jenisTiketList = [
+                'all' => 'Semua Jenis',
+                'Software Trouble' => 'Software Trouble',
+                'Hardware Trouble' => 'Hardware Trouble',
+                'Phone Trouble' => 'Phone Trouble',
+                'Password Trouble' => 'Password Trouble',
+                'Network Trouble' => 'Network Trouble'
+            ];
+
+            $data = [
+                'tiket' => $tiket,
+                'karyawanList' => $karyawanList,
+                'totalTicket' => count($tiket),
+                'currentFilter' => $filter,
+                'currentJenisFilter' => $jenisFilter,
+                'jenisTiketList' => $jenisTiketList,
+                'is_admin' => true
+            ];
+            return view('ticketing/v_ticketing', $data);
+        } elseif ($user && $user->role == 2) {
+            // User view - simplified
+            // Hitung jumlah antrian (tiket yang belum solved)
+            $unsolvedCount = $this->TiketModel->where('status', 'ongoing')->countAllResults();
+
+            $data = [
+                'unsolved_count' => $unsolvedCount,
+                'is_admin' => false
+            ];
+            return view('ticketing/v_user_ticketing', $data);
+        } else {
+            return redirect()->to(site_url('auth/login'));
         }
-
-        $tiket = $query->orderBy('tiket.create_date', 'DESC')->findAll();
-
-        // Ambil semua data karyawan untuk datalist
-        $karyawanList = $this->InventoryModel->findAll();
-
-        // Daftar jenis tiket untuk filter
-        $jenisTiketList = [
-            'all' => 'Semua Jenis',
-            'Software Trouble' => 'Software Trouble',
-            'Hardware Trouble' => 'Hardware Trouble',
-            'Phone Trouble' => 'Phone Trouble',
-            'Password Trouble' => 'Password Trouble'
-        ];
-
-        $data = [
-            'tiket' => $tiket,
-            'karyawanList' => $karyawanList,
-            'totalTicket' => count($tiket),
-            'currentFilter' => $filter,
-            'currentJenisFilter' => $jenisFilter,
-            'jenisTiketList' => $jenisTiketList,
-        ];
-        return view('ticketing/v_ticketing', $data);
     }
 
     private function getDateCondition($filter, $startDate = null, $endDate = null)
@@ -88,28 +106,51 @@ class Tiket extends BaseController
 
     public function store()
     {
+        $user = userLogin();
+        if (!$user) {
+            return redirect()->to(site_url('auth/login'));
+        }
+
         $validation = \Config\Services::validation();
 
-        $validation->setRules([
-            'nama' => 'required',
-            'jenis_tiket' => 'required|min_length[5]',
-            'desk_tiket' => 'required|min_length[10]'
-        ]);
+        if ($user->role == 1) {
+            // Admin: validate nama karyawan
+            $validation->setRules([
+                'nama' => 'required',
+                'jenis_tiket' => 'required|min_length[5]',
+                'desk_tiket' => 'required|min_length[10]'
+            ]);
+        } else {
+            // User: no nama field, use user data
+            $validation->setRules([
+                'jenis_tiket' => 'required|min_length[5]',
+                'desk_tiket' => 'required|min_length[10]'
+            ]);
+        }
 
         if (!$validation->withRequest($this->request)->run()) {
             return redirect()->back()->withInput()->with('error', implode(', ', $validation->getErrors()));
         }
 
-        // Ambil data karyawan berdasarkan nama
-        $karyawan = $this->KaryawanModel->where('nama_karyawan', $this->request->getPost('nama'))->first();
-
-        if (!$karyawan) {
-            return redirect()->back()->withInput()->with('error', 'Nama karyawan tidak ditemukan dalam database');
+        if ($user->role == 1) {
+            // Admin: get karyawan by name
+            $karyawan = $this->KaryawanModel->where('nama_karyawan', $this->request->getPost('nama'))->first();
+            if (!$karyawan) {
+                return redirect()->back()->withInput()->with('error', 'Nama karyawan tidak ditemukan dalam database');
+            }
+            $karyawanId = $karyawan['karyawan_id'];
+        } else {
+            // User: get karyawan by user name
+            $karyawan = $this->KaryawanModel->where('nama_karyawan', $user->nama_users)->first();
+            if (!$karyawan) {
+                return redirect()->back()->withInput()->with('error', 'Data karyawan tidak ditemukan untuk user ini');
+            }
+            $karyawanId = $karyawan['karyawan_id'];
         }
 
         // Data untuk insert
         $data = [
-            'karyawan_id' => $karyawan['karyawan_id'],
+            'karyawan_id' => $karyawanId,
             'jenis_tiket' => $this->request->getPost('jenis_tiket'),
             'desk_tiket' => $this->request->getPost('desk_tiket'),
             'create_date' => date('Y-m-d H:i:s'),

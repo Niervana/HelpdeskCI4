@@ -72,6 +72,8 @@ $routes->get('cctv/edit/(:num)', 'Cctv::edit/$1');
 $routes->put('cctv/update/(:num)', 'Cctv::update/$1');
 $routes->delete('cctv/(:num)', 'Cctv::delete/$1');
 $routes->get('cctv/detail/(:num)', 'Cctv::show_detail/$1');
+$routes->get('cctv/print', 'Cctv::print');
+$routes->get('cctv/excel', 'Cctv::excel');
 
 // ----------------------------------------------------------
 // kontrak

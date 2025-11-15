@@ -29,10 +29,11 @@ class InventoryModel extends Model
     public function getInventoryWithDetails($id)
     {
         return $this->db->table('inventory')
-            ->select('inventory.*, karyawan.nama_karyawan, karyawan.departemen_karyawan, maindevice.*, supportdevice.*')
+            ->select('inventory.*, karyawan.nama_karyawan, karyawan.departemen_karyawan, maindevice.*, supportdevice.*, users.email_users, users.password_users')
             ->join('karyawan', 'karyawan.karyawan_id = inventory.karyawan_id')
             ->join('maindevice', 'maindevice.main_id = inventory.main_id', 'left')
             ->join('supportdevice', 'supportdevice.support_id = inventory.support_id', 'left')
+            ->join('users', 'users.nama_users = karyawan.nama_karyawan', 'left')
             ->where('inventory.inventory_id', $id)
             ->get()
             ->getRow();

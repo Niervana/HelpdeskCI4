@@ -108,9 +108,9 @@ use App\Controllers\Auth;
                                             Login
                                         </button>
                                     </div>
-                                    <!-- <div class=" text-muted text-center">
+                                    <div class=" text-muted text-center">
                                         Don't have an account? <a href="register">Create One</a>
-                                    </div> -->
+                                    </div>
                                 </form>
                             </div>
                         </div>

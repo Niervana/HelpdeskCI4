@@ -34,6 +34,17 @@ class Inventory extends BaseController
     public function insert()
     {
         $data = $this->request->getPost();
+        // Insert into users table
+        $userData = [
+            'nama_users' => $data['nama_karyawan'],
+            'email_users' => $data['email_users'],
+            'password_users' => $data['password_users'], // Plain password
+            'role' => 2, // User role
+            'createdat_users' => date('Y-m-d H:i:s')
+        ];
+        $this->db->table('users')->insert($userData);
+        $userId = $this->db->insertID();
+
         // Insert into karyawan table
         $karyawanData = [
             'nama_karyawan' => $data['nama_karyawan'],
@@ -131,6 +142,8 @@ class Inventory extends BaseController
         $beforeChange = [
             'nama_karyawan' => $current->nama_karyawan,
             'departemen_karyawan' => $current->departemen_karyawan,
+            'email_users' => $current->email_users ?? '',
+            'password_users' => $current->password_users ?? '',
             'manufaktur' => $current->manufaktur,
             'jenis' => $current->jenis,
             'cpu' => $current->cpu,
@@ -152,6 +165,17 @@ class Inventory extends BaseController
             'scanner' => $current->scanner
         ];
 
+        // Update users table if email or password changed
+        if (isset($data['email_users']) && isset($data['password_users'])) {
+            $userData = [
+                'nama_users' => $data['nama_karyawan'],
+                'email_users' => $data['email_users'],
+                'password_users' => $data['password_users'], // Plain password
+                'role' => 2
+            ];
+            $this->db->table('users')->where('nama_users', $current->nama_karyawan)->update($userData);
+        }
+
         // Update karyawan table
         $karyawanData = [
             'nama_karyawan' => $data['nama_karyawan'],
@@ -159,39 +183,80 @@ class Inventory extends BaseController
         ];
         $this->db->table('karyawan')->where('karyawan_id', $current->karyawan_id)->update($karyawanData);
 
-        // Update maindevice table
-        $mainDeviceData = [
-            'manufaktur' => $data['manufaktur'],
-            'jenis' => $data['jenis'],
-            'cpu' => $data['cpu'],
-            'ram' => $data['ram'],
-            'os' => $data['os'],
-            'lisensi_windows' => $data['lisensi_windows'],
-            'storage' => $data['storage'],
-            'office' => $data['office'],
-            'lisensi_office' => $data['lisensi_office'],
-            'ipaddress' => $data['ipaddress'],
-            'hostname' => $data['hostname'],
-            'credential' => $data['credential']
-        ];
-        $this->db->table('maindevice')->where('main_id', $current->main_id)->update($mainDeviceData);
+        // Check if main_id is null, if so, insert new maindevice
+        if ($current->main_id === null) {
+            $mainDeviceData = [
+                'manufaktur' => $data['manufaktur'],
+                'jenis' => $data['jenis'],
+                'cpu' => $data['cpu'],
+                'ram' => $data['ram'],
+                'os' => $data['os'],
+                'lisensi_windows' => $data['lisensi_windows'],
+                'storage' => $data['storage'],
+                'office' => $data['office'],
+                'lisensi_office' => $data['lisensi_office'],
+                'ipaddress' => $data['ipaddress'],
+                'hostname' => $data['hostname'],
+                'credential' => $data['credential']
+            ];
+            $this->db->table('maindevice')->insert($mainDeviceData);
+            $mainId = $this->db->insertID();
+            // Update inventory table with new main_id
+            $this->db->table('inventory')->where('inventory_id', $id)->update(['main_id' => $mainId]);
+        } else {
+            // Update existing maindevice
+            $mainDeviceData = [
+                'manufaktur' => $data['manufaktur'],
+                'jenis' => $data['jenis'],
+                'cpu' => $data['cpu'],
+                'ram' => $data['ram'],
+                'os' => $data['os'],
+                'lisensi_windows' => $data['lisensi_windows'],
+                'storage' => $data['storage'],
+                'office' => $data['office'],
+                'lisensi_office' => $data['lisensi_office'],
+                'ipaddress' => $data['ipaddress'],
+                'hostname' => $data['hostname'],
+                'credential' => $data['credential']
+            ];
+            $this->db->table('maindevice')->where('main_id', $current->main_id)->update($mainDeviceData);
+        }
 
-        // Update supportdevice table
-        $supportDeviceData = [
-            'monitor' => $data['monitor'],
-            'keyboard' => $data['keyboard'],
-            'mouse' => $data['mouse'],
-            'usb_converter' => $data['usb_converter'],
-            'external_storage' => $data['external_storage'],
-            'printer' => $data['printer'],
-            'scanner' => $data['scanner']
-        ];
-        $this->db->table('supportdevice')->where('support_id', $current->support_id)->update($supportDeviceData);
+        // Check if support_id is null, if so, insert new supportdevice
+        if ($current->support_id === null) {
+            $supportDeviceData = [
+                'monitor' => $data['monitor'],
+                'keyboard' => $data['keyboard'],
+                'mouse' => $data['mouse'],
+                'usb_converter' => $data['usb_converter'],
+                'external_storage' => $data['external_storage'],
+                'printer' => $data['printer'],
+                'scanner' => $data['scanner']
+            ];
+            $this->db->table('supportdevice')->insert($supportDeviceData);
+            $supportId = $this->db->insertID();
+            // Update inventory table with new support_id
+            $this->db->table('inventory')->where('inventory_id', $id)->update(['support_id' => $supportId]);
+        } else {
+            // Update existing supportdevice
+            $supportDeviceData = [
+                'monitor' => $data['monitor'],
+                'keyboard' => $data['keyboard'],
+                'mouse' => $data['mouse'],
+                'usb_converter' => $data['usb_converter'],
+                'external_storage' => $data['external_storage'],
+                'printer' => $data['printer'],
+                'scanner' => $data['scanner']
+            ];
+            $this->db->table('supportdevice')->where('support_id', $current->support_id)->update($supportDeviceData);
+        }
 
-        // Get after_change data
+        // Get after_change data (need to refetch or build from data)
         $afterChange = [
             'nama_karyawan' => $karyawanData['nama_karyawan'],
             'departemen_karyawan' => $karyawanData['departemen_karyawan'],
+            'email_users' => $data['email_users'] ?? '',
+            'password_users' => $data['password_users'] ?? '',
             'manufaktur' => $mainDeviceData['manufaktur'],
             'jenis' => $mainDeviceData['jenis'],
             'cpu' => $mainDeviceData['cpu'],
@@ -239,6 +304,8 @@ class Inventory extends BaseController
             $beforeChange = [
                 'nama_karyawan' => $current->nama_karyawan,
                 'departemen_karyawan' => $current->departemen_karyawan,
+                'email_users' => $current->email_users ?? '',
+                'password_users' => $current->password_users ?? '',
                 'manufaktur' => $current->manufaktur,
                 'jenis' => $current->jenis,
                 'cpu' => $current->cpu,
@@ -280,6 +347,11 @@ class Inventory extends BaseController
                 $this->db->table('inventory')->where('inventory_id', $id)->delete();
                 // Delete from related tables
                 $this->db->table('karyawan')->where('karyawan_id', $current->karyawan_id)->delete();
+                // Delete user if exists (for registered users)
+                $user = $this->db->table('users')->where('nama_users', $current->nama_karyawan)->get()->getRow();
+                if ($user) {
+                    $this->db->table('users')->where('id_users', $user->id_users)->delete();
+                }
                 if ($current->main_id) {
                     $this->db->table('maindevice')->where('main_id', $current->main_id)->delete();
                 }
