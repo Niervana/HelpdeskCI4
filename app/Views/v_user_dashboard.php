@@ -107,7 +107,11 @@
                                                     <p class="card-text mb-1"><i class="fas fa-microchip"></i> <strong>CPU:</strong> <?= esc($device->cpu) ?></p>
                                                     <p class="card-text mb-1"><i class="fas fa-memory"></i> <strong>RAM:</strong> <?= esc($device->ram) ?> GB</p>
                                                     <p class="card-text mb-1"><i class="fas fa-hdd"></i> <strong>Storage:</strong> <?= esc($device->storage) ?> GB</p>
-                                                    <p class="card-text mb-1"><i class="fab fa-windows"></i> <strong>OS:</strong> <?= esc($device->os) ?></p>
+                                                    <p class="card-text mb-1"><i class="fa-brands fa-windows"></i> <strong>OS:</strong> <?= esc($device->os) ?></p>
+                                                    <p class="card-text mb-1"><i class="fas fa-user-shield"></i> <strong>Hostname:</strong> <?= esc($device->hostname) ?></p>
+                                                    <p class="card-text mb-1"><i class="fas fa-network-wired"></i> <strong>IP Address:</strong> <?= esc($device->ipaddress) ?></p>
+                                                    <p class="card-text mb-1"><i class="fas fa-block-brick-fire"></i> <strong>Credential:</strong> <?= esc($device->credential) ?></p>
+
                                                 <?php else: ?>
                                                     <p class="card-text text-muted">Tidak ada data device</p>
                                                 <?php endif; ?>
@@ -137,7 +141,7 @@
                                                         <p class="card-text mb-1"><i class="fas fa-scanner"></i> <strong>Scanner:</strong> <?= esc($device->scanner) ?></p>
                                                     <?php endif; ?>
                                                     <?php if ($device->usb_converter): ?>
-                                                        <p class="card-text mb-1"><i class="fas fa-usb"></i> <strong>USB Converter:</strong> <?= esc($device->usb_converter) ?></p>
+                                                        <p class="card-text mb-1"><i class="fas fa-usb-drive"></i> <strong>USB Converter:</strong> <?= esc($device->usb_converter) ?></p>
                                                     <?php endif; ?>
                                                     <?php if ($device->external_storage): ?>
                                                         <p class="card-text mb-1"><i class="fas fa-hdd"></i> <strong>External Storage:</strong> <?= esc($device->external_storage) ?> GB</p>

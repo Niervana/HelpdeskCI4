@@ -41,7 +41,7 @@ class Auth extends BaseController
             }
 
             if ($passwordValid) {
-                $params = ['id_users' => $user->id_users];
+                $params = ['id_users' => $user->id_users, 'role' => $user->role];
                 session()->set($params);
                 return redirect()->to(site_url('Home'));
             } else {

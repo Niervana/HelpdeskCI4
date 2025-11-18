@@ -45,11 +45,6 @@ $routes->addRedirect('/', 'Home');
 
 //exception------------------------------------------------------
 
-//mesin absensi-------------------------------------------------
-// $routes->get('forgetfp', 'Absensi::index');
-// $routes->get('attendancedatafingerprint', 'Absensi::attendance');
-// $routes->get('userdatafingerprint', 'Absensi::datauser');
-// -------------------------------------------------------------
 // inventory
 $routes->get('inventory', 'Inventory::index');
 $routes->get('inventory/add', 'Inventory::add');
@@ -76,23 +71,14 @@ $routes->get('cctv/print', 'Cctv::print');
 $routes->get('cctv/excel', 'Cctv::excel');
 
 // ----------------------------------------------------------
-// kontrak
-// $routes->get('kontrak', 'Kontrak::index');
-// $routes->get('kontrak/edit/(:num)', 'Kontrak::edit/$1');
-// $routes->put('kontrak(:any)', 'Kontrak::updatekontrak/$1');
 
-// ----------------------------------------------------------
 // account
 $routes->get('account', 'Account::index');
 $routes->get('account/add', 'Account::add');
 $routes->delete('account(:segment)', 'Account::delete/$1');
 $routes->get('account/move/(:num)', 'Account::move/$1');
 
-//-----------------------------------------------------------
-// timesheets
-// $routes->get('attendance', 'Timesheets::attendance');
-// $routes->get('officeshift', 'Timesheets::officeshift');
-//-----------------------------------------------------------
+
 // tiketing
 $routes->get('tiket', 'Tiket::index');
 $routes->post('tiket', 'Tiket::store');
@@ -101,17 +87,28 @@ $routes->get('tiket/detail/(:num)', 'Tiket::detail/$1');
 $routes->get('tiket/print', 'Tiket::print');
 $routes->get('tiket/excel', 'Tiket::excel');
 $routes->get('tiket/getFilteredData', 'Tiket::getFilteredData');
-//-----------------------------------------------------------
-// PKL
-// $routes->get('pkl', 'PKL::index');
-// $routes->get('pkl/add', 'PKL::add');
-// $routes->post('pkl', 'PKL::insert');
-// $routes->get('pkl/edit/(:num)', 'PKL::edit/$1');
-// $routes->put('pkl(:any)', 'PKL::update/$1');
-// $routes->delete('pkl(:segment)', 'PKL::delete/$1');
-// $routes->get('pkl/import', 'PKL::import_csv');
-// $routes->get('pkl/sertifikat', 'PKL::sertifikat');
-// $routes->get('pkl(:num)', 'PKL::cetakSertifikat/$1');
+$routes->get('tiket/getNotifications', 'Tiket::getNotifications');
+$routes->post('tiket/markNotificationsRead', 'Tiket::markNotificationsRead');
+$routes->post('tiket/bulkUpdateStatus', 'Tiket::bulkUpdateStatus');
+// -----------------------------------------------------------
+
+// Berita Acara
+$routes->get('berita-acara', 'BeritaAcara::index');
+$routes->get('berita-acara/add', 'BeritaAcara::add');
+$routes->post('berita-acara/store', 'BeritaAcara::store');
+$routes->get('berita-acara/edit/(:num)', 'BeritaAcara::edit/$1');
+$routes->put('berita-acara/update/(:num)', 'BeritaAcara::update/$1');
+$routes->delete('berita-acara/(:num)', 'BeritaAcara::delete/$1');
+$routes->get('berita-acara/detail/(:num)', 'BeritaAcara::detail/$1');
+$routes->get('berita-acara/print/(:num)', 'BeritaAcara::print/$1');
+
+// -----------------------------------------------------------
+// API Routes
+$routes->group('api', function ($routes) {
+    $routes->get('notifications', 'Api::notifications');
+    $routes->post('notifications/mark-read', 'Api::markRead');
+    $routes->post('notifications/mark-all-read', 'Api::markAllRead');
+});
 /*
  * --------------------------------------------------------------------
  * Additional Routing

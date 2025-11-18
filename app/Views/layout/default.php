@@ -52,6 +52,26 @@
                     </ul>
                 </form>
                 <ul class="navbar-nav navbar-right">
+                    <li class="dropdown dropdown-list-toggle">
+                        <a href="#" data-toggle="dropdown" class="nav-link nav-link-lg message-toggle beep">
+                            <i class="far fa-bell"></i>
+                            <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-list dropdown-menu-right">
+                            <div class="dropdown-header">Notifications
+                                <?php if (session()->get('role') == 1): ?>
+                                    <div class="float-right">
+                                        <a href="#" id="markAllRead">Mark All As Read</a>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="dropdown-list-content dropdown-list-message" id="notificationList">
+                                <div class="text-center">
+                                    <small>No notifications</small>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
                     <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                             <img alt="image" src="<?= base_url() ?>/template/assets/img/avatar/avatar-1.png" class="rounded-circle mr-1">
                             <div class="d-sm-none d-lg-inline-block"><?= userLogin() ? userLogin()->nama_users : 'Guest' ?></div>
@@ -159,6 +179,127 @@
 
     <!-- certain pages JS Scripts -->
     <?= $this->renderSection('script') ?>
+
+    <!-- Notification Script -->
+    <script>
+        $(document).ready(function() {
+            // Load notifications on page load
+            loadNotifications();
+
+            // Auto refresh notifications every 30 seconds
+            setInterval(loadNotifications, 30000);
+
+            // Mark all as read
+            $('#markAllRead').on('click', function(e) {
+                e.preventDefault();
+                markAllAsRead();
+            });
+
+
+
+            // Mark single notification as read when clicked
+            $(document).on('click', '.notification-item', function() {
+                var notifId = $(this).data('id');
+                markAsRead(notifId);
+            });
+        });
+
+        function loadNotifications() {
+            $.ajax({
+                url: '<?= base_url('api/notifications') ?>',
+                type: 'GET',
+                success: function(response) {
+                    updateNotificationUI(response);
+                },
+                error: function() {
+                    console.log('Error loading notifications');
+                }
+            });
+        }
+
+        function updateNotificationUI(data) {
+            var badge = $('#notificationBadge');
+            var list = $('#notificationList');
+
+            if (data.unread_count > 0) {
+                badge.text(data.unread_count).show();
+                $('.message-toggle').addClass('beep');
+            } else {
+                badge.hide();
+                $('.message-toggle').removeClass('beep');
+            }
+
+            if (data.notifications && data.notifications.length > 0) {
+                var html = '';
+                data.notifications.forEach(function(notif) {
+                    var unreadClass = notif.is_read == 0 ? 'unread' : '';
+                    html += '<a href="#" class="dropdown-item dropdown-item-unread notification-item ' + unreadClass + '" data-id="' + notif.id + '">' +
+                        '<div class="dropdown-item-avatar">' +
+                        '<img alt="image" src="<?= base_url() ?>/template/assets/img/avatar/avatar-1.png" class="rounded-circle">' +
+                        '</div>' +
+                        '<div class="dropdown-item-desc">' +
+                        '<b>' + notif.title + '</b>' +
+                        '<p>' + notif.message + '</p>' +
+                        '<div class="time">' + formatTime(notif.created_at) + '</div>' +
+                        '</div>' +
+                        '</a>';
+                });
+                list.html(html);
+            } else {
+                list.html('<div class="text-center"><small>No notifications</small></div>');
+            }
+        }
+
+        function markAsRead(id) {
+            $.ajax({
+                url: '<?= base_url('api/notifications/mark-read') ?>',
+                type: 'POST',
+                data: {
+                    ids: [id]
+                },
+                success: function() {
+                    loadNotifications();
+                }
+            });
+        }
+
+        function markAllAsRead() {
+            $.ajax({
+                url: '<?= base_url('api/notifications/mark-all-read') ?>',
+                type: 'POST',
+                data: {
+                    '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        loadNotifications();
+                        console.log('All notifications marked as read');
+                    } else {
+                        console.error('Failed to mark all notifications as read');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error marking all notifications as read:', error);
+                }
+            });
+        }
+
+
+
+        function formatTime(dateString) {
+            var date = new Date(dateString);
+            var now = new Date();
+            var diff = now - date;
+            var minutes = Math.floor(diff / 60000);
+            var hours = Math.floor(diff / 3600000);
+            var days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return minutes + ' minutes ago';
+            if (hours < 24) return hours + ' hours ago';
+            return days + ' days ago';
+        }
+    </script>
 </body>
 
 </html>

@@ -16,7 +16,46 @@ class Home extends BaseController
     {
         $user = userLogin();
         if ($user && $user->role == 1) {
-            return view('v_home');
+            // Admin dashboard - get ticket statistics
+            $tiketModel = new \App\Models\TiketModel();
+
+            // Get total tickets
+            $totalTickets = $tiketModel->countAllResults();
+
+            // Get ongoing tickets
+            $ongoingCount = $tiketModel->where('status', 'ongoing')->countAllResults();
+
+            // Get solved tickets
+            $solvedCount = $tiketModel->where('status', 'solved')->countAllResults();
+
+            // Get today's tickets
+            $todayCount = $tiketModel->where('DATE(create_date)', date('Y-m-d'))->countAllResults();
+
+            // Get ticket statistics by type for chart
+            $ticketStatsByType = $tiketModel->getTicketStatsByType();
+
+            // Get ticket statistics by month for line chart
+            $ticketStatsByMonth = $tiketModel->getTicketStatsByMonth();
+
+            // Get ticket statistics by status for bar chart
+            $ticketStatsByStatus = $tiketModel->getTicketStatsByStatus();
+
+            // Get recent berita acara
+            $beritaAcaraModel = new \App\Models\BeritaAcaraModel();
+            $berita_acara = $beritaAcaraModel->getWithDetails(10); // Get 10 latest
+
+            $data = [
+                'total_tickets' => $totalTickets,
+                'ongoing_count' => $ongoingCount,
+                'solved_count' => $solvedCount,
+                'today_count' => $todayCount,
+                'ticket_stats_by_type' => $ticketStatsByType,
+                'ticket_stats_by_month' => $ticketStatsByMonth,
+                'ticket_stats_by_status' => $ticketStatsByStatus,
+                'berita_acara' => $berita_acara
+            ];
+
+            return view('v_home', $data);
         } elseif ($user && $user->role == 2) {
             // User dashboard with ticket statistics and device information
             $tiketModel = new \App\Models\TiketModel();

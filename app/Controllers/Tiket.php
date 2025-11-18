@@ -5,18 +5,24 @@ namespace App\Controllers;
 use App\Models\TiketModel;
 use App\Models\InventoryModel;
 use App\Models\KaryawanModel;
+use App\Models\NotificationModel;
+use App\Models\UsersModel;
 
 class Tiket extends BaseController
 {
     protected $TiketModel;
     protected $InventoryModel;
     protected $KaryawanModel;
+    protected $NotificationModel;
+    protected $UsersModel;
 
     public function __construct()
     {
         $this->TiketModel = new TiketModel();
         $this->InventoryModel = new InventoryModel();
         $this->KaryawanModel = new KaryawanModel();
+        $this->NotificationModel = new NotificationModel();
+        $this->UsersModel = new UsersModel();
     }
 
     public function index()
@@ -157,7 +163,10 @@ class Tiket extends BaseController
             'status' => 'ongoing'
         ];
 
-        $this->TiketModel->insert($data);
+        $tiketId = $this->TiketModel->insert($data);
+
+        // Trigger admin notification
+        $this->triggerAdminNotification($tiketId, $data);
 
         return redirect()->to('/tiket')->with('success', 'Tiket berhasil ditambahkan');
     }
@@ -181,12 +190,190 @@ class Tiket extends BaseController
     public function updateStatus($id)
     {
         $status = $this->request->getPost('status');
-        if (in_array($status, ['ongoing', 'solved'])) {
-            $this->TiketModel->update($id, ['status' => $status]);
-            return $this->response->setJSON(['success' => true]);
+
+        // Validate status
+        if (!in_array($status, ['ongoing', 'solved'])) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid status value'
+            ]);
         }
-        return $this->response->setJSON(['success' => false]);
+
+        // Check if ticket exists
+        $ticket = $this->TiketModel->find($id);
+        if (!$ticket) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Ticket not found'
+            ]);
+        }
+
+        // Update the status
+        $result = $this->TiketModel->update($id, ['status' => $status]);
+
+        if ($result) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Status updated successfully'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to update status'
+            ]);
+        }
     }
+
+    private function triggerAdminNotification($tiketId, $tiketData)
+    {
+        $user = userLogin();
+        if (!$user) {
+            return;
+        }
+
+        // Get user info
+        $userInfo = $this->UsersModel->find($user->id_users);
+
+        // Only create notification for tickets that are not solved
+        if ($tiketData['status'] !== 'solved') {
+            // Check if notification already exists for this ticket
+            $existingNotification = $this->NotificationModel
+                ->where('type', 'new_ticket')
+                ->where('data LIKE', '%"ticket_id":' . $tiketId . '%')
+                ->first();
+
+            if (!$existingNotification) {
+                // Prepare notification data
+                $notificationData = [
+                    'type' => 'new_ticket',
+                    'title' => 'Tiket Baru: ' . $tiketData['jenis_tiket'],
+                    'message' => 'Tiket baru dari ' . ($userInfo['nama_users'] ?? 'Unknown'),
+                    'data' => json_encode([
+                        'ticket_id' => $tiketId,
+                        'jenis_tiket' => $tiketData['jenis_tiket'],
+                        'user_name' => $userInfo['nama_users'] ?? 'Unknown',
+                        'desk_tiket' => substr($tiketData['desk_tiket'], 0, 100) . (strlen($tiketData['desk_tiket']) > 100 ? '...' : ''),
+                        'create_date' => $tiketData['create_date'],
+                        'status' => $tiketData['status']
+                    ]),
+                    'is_read' => 0
+                ];
+
+                // Insert notification
+                $this->NotificationModel->insert($notificationData);
+            }
+        }
+    }
+
+    public function getNotifications()
+    {
+        $lastId = $this->request->getGet('lastId') ?? 0;
+
+        // Get notifications that are unread and belong to tickets that are still ongoing
+        $notifications = $this->NotificationModel
+            ->select('notifications.*, tiket.status as ticket_status')
+            ->join('tiket', 'JSON_EXTRACT(notifications.data, "$.ticket_id") = tiket.tiket_id', 'left')
+            ->where('notifications.id >', $lastId)
+            ->where('notifications.is_read', 0)
+            ->where('tiket.status', 'ongoing') // Only show notifications for ongoing tickets
+            ->orderBy('notifications.created_at', 'DESC')
+            ->findAll();
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'notifications' => $notifications,
+            'count' => count($notifications)
+        ]);
+    }
+
+    public function markNotificationsRead()
+    {
+        $ids = $this->request->getJSON(true)['ids'] ?? [];
+
+        if (empty($ids)) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'No notification IDs provided'
+            ]);
+        }
+
+        $result = $this->NotificationModel->markAsRead($ids);
+
+        if ($result) {
+            return $this->response->setJSON([
+                'status' => 'success',
+                'message' => 'Notifikasi ditandai sudah dibaca'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Gagal menandai notifikasi'
+            ]);
+        }
+    }
+
+    public function bulkUpdateStatus()
+    {
+        $ids = $this->request->getPost('ids');
+        $status = $this->request->getPost('status');
+
+        // Validate inputs
+        if (empty($ids) || !is_array($ids)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No ticket IDs provided'
+            ]);
+        }
+
+        if (!in_array($status, ['ongoing', 'solved'])) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid status value'
+            ]);
+        }
+
+        $successCount = 0;
+        $errors = [];
+
+        foreach ($ids as $id) {
+            // Check if ticket exists and is not already solved
+            $ticket = $this->TiketModel->find($id);
+            if (!$ticket) {
+                $errors[] = "Ticket ID {$id} not found";
+                continue;
+            }
+
+            if ($ticket['status'] == 'solved') {
+                $errors[] = "Ticket ID {$id} is already solved";
+                continue;
+            }
+
+            // Update the status
+            $result = $this->TiketModel->update($id, ['status' => $status]);
+            if ($result) {
+                $successCount++;
+            } else {
+                $errors[] = "Failed to update ticket ID {$id}";
+            }
+        }
+
+        if ($successCount > 0) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => "{$successCount} ticket(s) updated successfully" . (!empty($errors) ? ". Some errors occurred." : ""),
+                'updated_count' => $successCount,
+                'errors' => $errors
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No tickets were updated',
+                'errors' => $errors
+            ]);
+        }
+    }
+
+
 
     public function getKaryawan()
     {

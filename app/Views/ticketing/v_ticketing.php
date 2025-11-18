@@ -16,6 +16,9 @@
     </div>
 
     <div class="section-body">
+        <!-- Real-time Notifications -->
+        <div id="notificationContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
         <!-- Form Input Ticket -->
         <div class="card">
             <div class="card-header">
@@ -164,6 +167,9 @@
             <div class="card-header">
                 <h4>Daftar Ticket</h4>
                 <div class="card-header-action">
+                    <button type="button" class="btn btn-warning" id="bulkMarkSolved" style="display: none;">
+                        <i class="fas fa-check-double"></i> Mark Selected as Solved
+                    </button>
                     <a href="<?= base_url('tiket/print?filter=' . $currentFilter . '&jenis=' . $currentJenisFilter) ?>"
                         class="btn btn-primary print-link <?php echo (isset($tiket) && !empty($tiket)) ? '' : 'disabled'; ?>"
                         target="_blank">
@@ -180,6 +186,12 @@
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr>
+                                <th width="50">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="selectAll">
+                                        <label class="custom-control-label" for="selectAll"></label>
+                                    </div>
+                                </th>
                                 <th>Date</th>
                                 <th>Nama</th>
                                 <th>Department</th>
@@ -191,11 +203,21 @@
                         <tbody id="ticketTableBody">
                             <?php if (empty($tiket)): ?>
                                 <tr>
-                                    <td colspan="6" class="text-center">Tidak ada data ticket</td>
+                                    <td colspan="7" class="text-center">Tidak ada data ticket</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($tiket as $ticket): ?>
                                     <tr>
+                                        <td>
+                                            <?php if ($ticket['status'] != 'solved'): ?>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input ticket-checkbox"
+                                                        id="check-<?= $ticket['tiket_id'] ?>"
+                                                        data-id="<?= $ticket['tiket_id'] ?>">
+                                                    <label class="custom-control-label" for="check-<?= $ticket['tiket_id'] ?>"></label>
+                                                </div>
+                                            <?php endif; ?>
+                                        </td>
                                         <td><?= date('d/m/Y H:i', strtotime($ticket['create_date'])) ?></td>
                                         <td><?= esc($ticket['nama_karyawan']) ?></td>
                                         <td><?= esc($ticket['departemen_karyawan']) ?></td>
@@ -297,7 +319,7 @@
                     tbody.empty();
 
                     if (response.tiket.length === 0) {
-                        tbody.append('<tr><td colspan="6" class="text-center">Tidak ada data ticket</td></tr>');
+                        tbody.append('<tr><td colspan="7" class="text-center">Tidak ada data ticket</td></tr>');
                     } else {
                         response.tiket.forEach(function(ticket) {
                             let isSolved = ticket.status == 'solved';
@@ -311,7 +333,16 @@
                                 minute: '2-digit'
                             });
 
+                            let checkboxCell = '';
+                            if (!isSolved) {
+                                checkboxCell = '<div class="custom-control custom-checkbox">' +
+                                    '<input type="checkbox" class="custom-control-input ticket-checkbox" id="check-' + ticket.tiket_id + '" data-id="' + ticket.tiket_id + '">' +
+                                    '<label class="custom-control-label" for="check-' + ticket.tiket_id + '"></label>' +
+                                    '</div>';
+                            }
+
                             let row = '<tr>' +
+                                '<td>' + checkboxCell + '</td>' +
                                 '<td>' + formattedDate + '</td>' +
                                 '<td>' + escapeHtml(ticket.nama_karyawan) + '</td>' +
                                 '<td>' + escapeHtml(ticket.departemen_karyawan) + '</td>' +
@@ -472,6 +503,160 @@
             }
         });
 
+        // Handle select all checkbox
+        $('#selectAll').on('change', function() {
+            let isChecked = $(this).is(':checked');
+            $('.ticket-checkbox').prop('checked', isChecked);
+            toggleBulkButton();
+        });
+
+        // Handle individual checkboxes
+        $(document).on('change', '.ticket-checkbox', function() {
+            let allChecked = $('.ticket-checkbox').length === $('.ticket-checkbox:checked').length;
+            $('#selectAll').prop('checked', allChecked);
+            toggleBulkButton();
+        });
+
+        // Toggle bulk button visibility
+        function toggleBulkButton() {
+            let checkedCount = $('.ticket-checkbox:checked').length;
+            if (checkedCount > 0) {
+                $('#bulkMarkSolved').show();
+                $('#bulkMarkSolved').text('Mark ' + checkedCount + ' Selected as Solved');
+            } else {
+                $('#bulkMarkSolved').hide();
+            }
+        }
+
+        // Handle bulk mark as solved
+        $('#bulkMarkSolved').on('click', function() {
+            let selectedIds = [];
+            $('.ticket-checkbox:checked').each(function() {
+                selectedIds.push($(this).data('id'));
+            });
+
+            if (selectedIds.length === 0) {
+                iziToast.warning({
+                    title: 'Warning',
+                    message: 'Pilih tiket yang akan diupdate',
+                    position: 'topRight'
+                });
+                return;
+            }
+
+            // Show confirmation modal instead of browser confirm
+            showBulkConfirmModal(selectedIds);
+        });
+
+        // Function to show bulk confirmation modal
+        function showBulkConfirmModal(selectedIds) {
+            // Create modal HTML
+            let modalHtml = `
+                <div class="modal fade" id="bulkConfirmModal" tabindex="-1" role="dialog" aria-labelledby="bulkConfirmModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="bulkConfirmModalLabel">
+                                    <i class="fas fa-exclamation-triangle text-warning"></i> Konfirmasi Bulk Update
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-warning" role="alert">
+                                    <i class="fas fa-info-circle"></i>
+                                    <strong>Perhatian!</strong> Anda akan menandai <strong>${selectedIds.length}</strong> tiket sebagai <strong>"Solved"</strong>.
+                                </div>
+                                <div class="text-center">
+                                    <p><strong>Tiket yang akan diupdate:</strong></p>
+                                    <div class="border rounded p-2 bg-light">
+                                        <small class="text-muted">ID: ${selectedIds.join(', ')}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    <i class="fas fa-times"></i> Batal
+                                </button>
+                                <button type="button" class="btn btn-success" id="confirmBulkUpdate">
+                                    <i class="fas fa-check"></i> Ya, Tandai sebagai Solved
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Remove existing modal if any
+            $('#bulkConfirmModal').remove();
+
+            // Append modal to body
+            $('body').append(modalHtml);
+
+            // Show modal
+            $('#bulkConfirmModal').modal('show');
+
+            // Handle confirm button click
+            $('#confirmBulkUpdate').on('click', function() {
+                performBulkUpdate(selectedIds);
+                $('#bulkConfirmModal').modal('hide');
+            });
+
+            // Clean up modal when hidden
+            $('#bulkConfirmModal').on('hidden.bs.modal', function() {
+                $(this).remove();
+            });
+        }
+
+        // Function to perform bulk update
+        function performBulkUpdate(selectedIds) {
+            $.ajax({
+                url: '<?= base_url('tiket/bulkUpdateStatus') ?>',
+                type: 'POST',
+                data: {
+                    ids: selectedIds,
+                    status: 'solved',
+                    '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+                },
+                beforeSend: function() {
+                    $('#bulkMarkSolved').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Processing...');
+                },
+                success: function(response) {
+                    if (response.success) {
+                        iziToast.success({
+                            title: 'Success',
+                            message: response.message,
+                            position: 'topRight'
+                        });
+
+                        // Refresh the table data
+                        loadFilteredData(currentFilter, currentJenis, customDateRange ? customDateRange.start : null, customDateRange ? customDateRange.end : null);
+
+                        // Reset checkboxes
+                        $('.ticket-checkbox, #selectAll').prop('checked', false);
+                        toggleBulkButton();
+                    } else {
+                        iziToast.error({
+                            title: 'Error',
+                            message: response.message,
+                            position: 'topRight'
+                        });
+                    }
+                },
+                error: function() {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Gagal mengupdate status tiket',
+                        position: 'topRight'
+                    });
+                },
+                complete: function() {
+                    $('#bulkMarkSolved').prop('disabled', false).html('<i class="fas fa-check-double"></i> Mark Selected as Solved');
+                }
+            });
+        }
+
         // Handle status toggle with event delegation
         $(document).on('change', '.status-toggle', function() {
             if ($(this).prop('disabled')) {
@@ -495,6 +680,8 @@
                         label.text(status === 'solved' ? 'Solved' : 'Ongoing');
                         if (status === 'solved') {
                             checkbox.prop('disabled', true);
+                            // Also disable the corresponding checkbox in the select column
+                            $('#check-' + id).prop('checked', false).hide();
                         }
                         iziToast.success({
                             title: 'Success',
@@ -504,7 +691,7 @@
                     } else {
                         iziToast.error({
                             title: 'Error',
-                            message: 'Gagal mengupdate status',
+                            message: response.message || 'Gagal mengupdate status',
                             position: 'topRight'
                         });
                         checkbox.prop('checked', !checkbox.is(':checked'));
@@ -617,6 +804,110 @@
                 $('#customDateFilter').removeClass('btn-outline-primary').addClass('btn-primary');
             }
         })();
+
+        // Real-time notification polling
+        let lastNotificationId = 0;
+        let notificationInterval;
+        let isPollingActive = true;
+
+        function startNotificationPolling() {
+            notificationInterval = setInterval(function() {
+                if (!isPollingActive) return;
+
+                $.ajax({
+                    url: '<?= base_url('tiket/getNotifications') ?>',
+                    type: 'GET',
+                    data: {
+                        lastId: lastNotificationId
+                    },
+                    success: function(response) {
+                        if (response.status === 'success' && response.notifications && response.notifications.length > 0) {
+                            // Show new notifications
+                            response.notifications.forEach(function(notification, index) {
+                                setTimeout(function() {
+                                    showNotificationToast(notification);
+                                }, index * 1000); // Stagger notifications by 1 second
+                            });
+
+                            // Update last notification ID
+                            let maxId = Math.max(...response.notifications.map(n => n.id));
+                            lastNotificationId = maxId;
+
+                            // Also refresh the table data
+                            loadFilteredData(currentFilter, currentJenis, customDateRange ? customDateRange.start : null, customDateRange ? customDateRange.end : null);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error polling notifications:', error);
+                    }
+                });
+            }, 3000); // Poll every 3 seconds for faster updates
+        }
+
+        function showNotificationToast(notification) {
+            let iconClass = '';
+            let data = JSON.parse(notification.data);
+
+            switch (data.jenis_tiket) {
+                case 'Software Trouble':
+                    iconClass = 'fas fa-code';
+                    break;
+                case 'Hardware Trouble':
+                    iconClass = 'fas fa-cogs';
+                    break;
+                case 'Phone Trouble':
+                    iconClass = 'fas fa-phone';
+                    break;
+                case 'Password Trouble':
+                    iconClass = 'fas fa-key';
+                    break;
+                case 'Network Trouble':
+                    iconClass = 'fas fa-wifi';
+                    break;
+                default:
+                    iconClass = 'fas fa-ticket-simple';
+            }
+
+            iziToast.show({
+                title: '<i class="' + iconClass + '"></i> ' + notification.title,
+                message: notification.message + '<br><small>' + data.desk_tiket + '</small>',
+                position: 'topRight',
+                timeout: 10000, // Show for 10 seconds
+                color: 'blue',
+                backgroundColor: '#007bff',
+                progressBarColor: '#fff',
+                close: true,
+                closeOnClick: true,
+                drag: false,
+                pauseOnHover: true,
+                resetOnHover: true,
+                onClosing: function(instance, toast, closedBy) {
+                    // Mark notification as read when closed
+                    $.ajax({
+                        url: '<?= base_url('tiket/markNotificationsRead') ?>',
+                        type: 'POST',
+                        data: {
+                            ids: [notification.id],
+                            '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+                        },
+                        success: function() {
+                            console.log('Notification marked as read');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Start polling when page loads
+        startNotificationPolling();
+
+        // Stop polling when page unloads
+        $(window).on('beforeunload', function() {
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+            }
+        });
+
     });
 </script>
 
