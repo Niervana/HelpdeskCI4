@@ -57,19 +57,18 @@ use App\Controllers\Auth;
                             </div>
 
                             <div class="card-body">
-                                <p class="text-muted">We will send a Information to IT Departement</p>
-                                <form method="POST">
-                                    <div class="form-group">
-                                        <label for="email">Email</label>
-                                        <input id="email" type="email" class="form-control" name="email" tabindex="1" required autofocus>
+                                <div class="text-center">
+                                    <div class="alert alert-info">
+                                        <h5><i class="fas fa-info-circle"></i></h5>
+                                        <p class="mb-2">Untuk lupa password, silakan hubungi Admin IT</p>
                                     </div>
-                                </form>
-                                <div class="form-group">
-                                    <a href="<?= base_url('verifikasi'); ?>"><button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
-                                            Forgot Password
-                                        </button>
                                 </div>
 
+                                <div class="form-group text-center">
+                                    <a href="<?= base_url('login'); ?>" class="btn btn-secondary btn-lg">
+                                        <i class="fas fa-arrow-left"></i> Kembali ke Login
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

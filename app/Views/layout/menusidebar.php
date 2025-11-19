@@ -17,11 +17,11 @@ if ($role == 1) {
     <li class="nav-item<?= ($currentSegment === 'berita-acara') ? ' active' : '' ?>">
         <a href="<?= base_url('berita-acara'); ?>" class="nav-link"><i class="fas fa-file-alt"></i> <span>Berita Acara</span></a>
     </li>
-    <li class="nav-item<?= ($currentSegment === 'inventory') ? ' active' : '' ?>">
-        <a href="<?= base_url('inventory'); ?>" class="nav-link"><i class="fas fa-solid fa-server"></i> <span>Inventory</span></a>
-    </li>
     <li class="nav-item<?= ($currentSegment === 'tiket') ? ' active' : '' ?>">
         <a href="<?= base_url('tiket'); ?>" class="nav-link"><i class="fas fa-ticket-simple<?= $hasUnsolvedTickets ? ' fa-beat' : '' ?>"></i> <span>Ticket</span></a>
+    </li>
+    <li class="nav-item<?= ($currentSegment === 'inventory') ? ' active' : '' ?>">
+        <a href="<?= base_url('inventory'); ?>" class="nav-link"><i class="fas fa-solid fa-server"></i> <span>Inventory</span></a>
     </li>
     <li class="nav-item dropdown<?= ($currentSegment === 'cctv') ? ' active' : '' ?>">
         <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-video-camera"></i> <span>CCTV</span></a>
@@ -36,10 +36,10 @@ if ($role == 1) {
         <a href="#" class="nav-link disabled" onclick="return false;"><i class="fas fa-file-alt"></i> <span>Berita Acara</span></a>
     </li>
     <li class="nav-item disabled">
-        <a href="#" class="nav-link disabled" onclick="return false;"><i class="fas fa-solid fa-server"></i> <span>Inventory</span></a>
+        <a href="#" class="nav-link disabled" onclick="return false;"><i class="fas fa-ticket-simple"></i> <span>Ticket</span></a>
     </li>
     <li class="nav-item disabled">
-        <a href="#" class="nav-link disabled" onclick="return false;"><i class="fas fa-ticket-simple"></i> <span>Ticket</span></a>
+        <a href="#" class="nav-link disabled" onclick="return false;"><i class="fas fa-solid fa-server"></i> <span>Inventory</span></a>
     </li>
     <li class="nav-item dropdown disabled">
         <a href="#" class="nav-link has-dropdown disabled" data-toggle="dropdown" onclick="return false;"><i class="fas fa-video-camera"></i> <span>CCTV</span></a>

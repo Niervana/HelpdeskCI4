@@ -39,7 +39,6 @@ $routes->get('create-db', function () {
 $routes->get('login', 'Auth::login');
 $routes->get('register', 'Auth::register');
 $routes->get('forgot', 'Auth::forgot');
-$routes->get('verifikasi', 'Auth::verifikasi');
 $routes->post('register', 'Auth::insertdata');
 $routes->addRedirect('/', 'Home');
 

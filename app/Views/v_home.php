@@ -233,13 +233,7 @@
 
 <?= $this->section('content') ?>
 <section class="section">
-    <div class="section-header">
-        <h1>Dashboard Admin</h1>
-        <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item active"><a href="/">Dashboard</a></div>
-            <div class="breadcrumb-item">Admin</div>
-        </div>
-    </div>
+
 
     <div class="section-body">
         <!-- Stat Cards Row -->
@@ -634,14 +628,24 @@
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
 
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-            oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
 
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            Format: [frequency, startTime, duration]
+            const notes = [
+                [523.25, 0, 0.15], // C5
+                [659.25, 0.15, 0.15], // E5
+                [783.99, 0.3, 0.3] // G5
+            ];
+
+
+            notes.forEach(([freq, start, duration]) => {
+                oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + start);
+            });
+
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
 
             oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.3);
+            oscillator.stop(audioContext.currentTime + 0.6);
         } catch (error) {
             console.log('Web Audio API not supported');
         }

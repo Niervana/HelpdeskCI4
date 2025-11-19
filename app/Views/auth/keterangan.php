@@ -47,30 +47,29 @@ use App\Controllers\Auth;
             <div class="container">
                 <div class="d-flex align-items-center justify-content-center" style="height:100vh">
                     <div class="card">
-                        <div class="col-sm" <div class="card-header">
-                        </div>
-                        <div class="card-body">
-                            <div class="empty-state" data-height="400">
-                                <div class="empty-state-icon bg-success">
-                                    <i class="fas fa-check"></i>
+                        <div class="col-sm" class="card-header">
+                            </class=>
+                            <div class="card-body">
+                                <div class="empty-state" data-height="400">
+                                    <div class="empty-state-icon bg-success">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <h2>Request Success</h2>
+                                    <p class="lead">
+                                        Akun anda berhasil dibuat
+                                    </p>
+                                    <a href="<?= base_url('login') ?>" class="mt-4 bb">Login</a>
                                 </div>
-                                <h2>Request Success</h2>
-                                <p class="lead">
-                                    Akun mu sudah diajukan, just contact IT departement. (Code: <a href="#" class="bb">150598</a>)
-                                </p>
-                                <a href="register" class="btn btn-warning mt-4">Daftar Lagi</a>
-                                <a href="login" class="mt-4 bb">Login</a>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
-    </div>
 
 
 
-    </section>
+        </section>
     </div>
 
     <!-- General JS Scripts -->

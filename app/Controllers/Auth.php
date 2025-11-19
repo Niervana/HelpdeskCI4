@@ -65,9 +65,10 @@ class Auth extends BaseController
     {
         return view('auth/register');
     }
-    public function verifikasi()
+
+    public function forgot()
     {
-        return view('auth/keterangan');
+        return view('auth/forgot');
     }
     public function insertdata()
     {
@@ -101,7 +102,7 @@ class Auth extends BaseController
         $this->db->table('inventory')->insert($inventoryData);
 
         if ($this->db->affectedRows() > 0) {
-            return redirect()->to(site_url('auth/verifikasi'));
+            return redirect()->to(site_url('login'));
         }
     }
 }

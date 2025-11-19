@@ -83,9 +83,9 @@ use App\Controllers\Auth;
                                             <div class="invalid-feedback">
                                                 Please eusi in your password
                                             </div>
-                                            <!-- <div class="float-right">
-                                                <a href="forgot" class="text-small">Hilap Password?</a>
-                                            </div> -->
+                                            <div class="float-right">
+                                                <a href="forgot" class="text-small">Forgot Password?</a>
+                                            </div>
                                         </div>
                                         <div class="input-group">
                                             <input id="password" type="password" class="form-control" name="password" tabindex="2" required>
