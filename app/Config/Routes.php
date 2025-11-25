@@ -41,6 +41,7 @@ $routes->get('register', 'Auth::register');
 $routes->get('forgot', 'Auth::forgot');
 $routes->post('register', 'Auth::insertdata');
 $routes->addRedirect('/', 'Home');
+$routes->get('download-script', 'Home::download_script');
 
 //exception------------------------------------------------------
 
@@ -107,6 +108,7 @@ $routes->group('api', function ($routes) {
     $routes->get('notifications', 'Api::notifications');
     $routes->post('notifications/mark-read', 'Api::markRead');
     $routes->post('notifications/mark-all-read', 'Api::markAllRead');
+    $routes->post('update-main-device', 'Api::updateMainDevice');
 });
 /*
  * --------------------------------------------------------------------

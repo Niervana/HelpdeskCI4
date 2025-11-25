@@ -105,7 +105,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>RAM</label>
-                                    <input type="number" name="ram" value="<?= $inventory->ram ?>" class="form-control">
+                                    <input type="text" name="ram" value="<?= $inventory->ram ?>" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>OS</label>
@@ -117,7 +117,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Storage</label>
-                                    <input type="number" name="storage" value="<?= $inventory->storage ?>" class="form-control">
+                                    <input type="text" name="storage" value="<?= $inventory->storage ?>" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>Office</label>

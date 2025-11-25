@@ -105,8 +105,8 @@
                                                     <p class="card-text mb-1"><i class="fas fa-building"></i> <strong>Manufaktur:</strong> <?= esc($device->manufaktur) ?></p>
                                                     <p class="card-text mb-1"><i class="fas fa-laptop"></i> <strong>Jenis:</strong> <?= esc($device->jenis) ?></p>
                                                     <p class="card-text mb-1"><i class="fas fa-microchip"></i> <strong>CPU:</strong> <?= esc($device->cpu) ?></p>
-                                                    <p class="card-text mb-1"><i class="fas fa-memory"></i> <strong>RAM:</strong> <?= esc($device->ram) ?> GB</p>
-                                                    <p class="card-text mb-1"><i class="fas fa-hdd"></i> <strong>Storage:</strong> <?= esc($device->storage) ?> GB</p>
+                                                    <p class="card-text mb-1"><i class="fas fa-memory"></i> <strong>RAM:</strong> <?= esc($device->ram) ?></p>
+                                                    <p class="card-text mb-1"><i class="fas fa-hdd"></i> <strong>Storage:</strong> <?= esc($device->storage) ?></p>
                                                     <p class="card-text mb-1"><i class="fa-brands fa-windows"></i> <strong>OS:</strong> <?= esc($device->os) ?></p>
                                                     <p class="card-text mb-1"><i class="fas fa-user-shield"></i> <strong>Hostname:</strong> <?= esc($device->hostname) ?></p>
                                                     <p class="card-text mb-1"><i class="fas fa-network-wired"></i> <strong>IP Address:</strong> <?= esc($device->ipaddress) ?></p>
@@ -155,12 +155,69 @@
                                 <?php endforeach; ?>
                             </div>
                             <div class="text-center">
-                                <p class="text-info"><i class="fas fa-info-circle"></i> Tolong hubungi admin IT, untuk melengkapi data perangkat</p>
+                                <p class="text-info"><i class="fas fa-info-circle"></i> Hubungi IT untuk melengkapi data sepenuhnya</p>
                             </div>
                         <?php else: ?>
                             <div class="text-center">
                                 <p class="text-muted">Tidak ada data perangkat yang tersedia</p>
-                                <p class="text-info"><i class="fas fa-info-circle"></i> Tolong hubungi admin IT, untuk melengkapi data perangkat</p>
+                                <p class="text-info"><i class="fas fa-info-circle"></i> <a href="<?= base_url('download-script'); ?>" class="nav-link">Lengkapi Data</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Berita Acara Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-file-alt"></i> Berita Acara Terbaru</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <?php
+                        $recentBeritaAcara = array_slice($berita_acara ?? [], 0, 10);
+                        if (!empty($recentBeritaAcara)):
+                        ?>
+                            <div class="table-responsive">
+                                <table class="table table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Jenis Kegiatan</th>
+                                            <th>Lokasi</th>
+                                            <th>Pelaksana</th>
+                                            <th>Tanggal</th>
+                                            <th>Keterangan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($recentBeritaAcara as $ba): ?>
+                                            <tr>
+                                                <td>
+                                                    <strong><?= esc($ba['jenis_kegiatan']) ?></strong>
+                                                </td>
+                                                <td><?= esc($ba['lokasi']) ?></td>
+                                                <td><?= esc($ba['pelaksana']) ?></td>
+                                                <td>
+                                                    <small class="text-muted">
+                                                        <?= date('d M Y', strtotime($ba['tanggal'])) ?>
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted">
+                                                        <?= esc(substr($ba['keterangan'], 0, 50)) ?><?= strlen($ba['keterangan']) > 50 ? '...' : '' ?>
+                                                    </small>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php else: ?>
+                            <div class="text-center py-5">
+                                <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
+                                <p class="text-muted">Belum ada data Berita Acara</p>
                             </div>
                         <?php endif; ?>
                     </div>

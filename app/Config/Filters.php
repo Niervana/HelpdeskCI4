@@ -24,6 +24,7 @@ class Filters extends BaseConfig
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
         'isLoggedIn'    => LoginFilter::class,
+        'apiauth'       => \App\Filters\ApiAuth::class,
     ];
 
     /**
@@ -33,7 +34,12 @@ class Filters extends BaseConfig
     public array $globals = [
         'before' => [
             // 'honeypot',
-            'csrf',
+            // SOLUSI: Tambahkan exception di sini
+            'csrf' => ['except' => [
+                'login',
+                'Auth/loginProcess',
+                'api/*',  // ← Exception untuk semua route API
+            ]],
             // 'invalidchars',
         ],
         'after' => [
@@ -52,7 +58,7 @@ class Filters extends BaseConfig
      *
      * If you use this, you should disable auto-routing because auto-routing
      * permits any HTTP method to access a controller. Accessing the controller
-     * with a method you don’t expect could bypass the filter.
+     * with a method you don't expect could bypass the filter.
      */
     public array $methods = [];
 
@@ -64,25 +70,20 @@ class Filters extends BaseConfig
      * 'isLoggedIn' => ['before' => ['account/*', 'profiles/*']]
      */
     public array $filters = [
-        'csrf' => [
-            'except' => ['login', 'Auth/loginProcess']
-        ],
+        // HAPUS atau COMMENT bagian csrf di sini karena sudah diatur di $globals
+        // 'csrf' => [
+        //     'except' => ['login', 'Auth/loginProcess', 'api/*']
+        // ],
         'isLoggedIn' => [
             'before' => [
                 '/',
                 'Home',
                 'Karyawan',
                 'Karyawan/*',
-                'PKL',
-                'PKL/*',
-                'Kontrak',
-                'Kontrak/*',
                 'Account',
                 'Account/*',
                 'Tiket',
                 'Tiket/*',
-                'Timesheets',
-                'Timesheets/*',
                 'Inventory',
                 'Inventory/*',
                 'Cctv',

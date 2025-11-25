@@ -1,24 +1,40 @@
 <?php
-require_once 'vendor/autoload.php';
+// Simple script to check tickets in database
 require_once 'app/Config/Database.php';
 
-$db = \Config\Database::connect();
+use Config\Database;
 
-$tickets = $db->table('tiket')->countAll();
-echo 'Total tickets: ' . $tickets . PHP_EOL;
+$db = Database::connect();
 
+echo "Checking tickets in database...\n";
+
+// Count all tickets
+$totalTickets = $db->table('tiket')->countAll();
+echo "Total tickets in database: $totalTickets\n";
+
+// Count tickets by status
 $ongoing = $db->table('tiket')->where('status', 'ongoing')->countAllResults();
-echo 'Ongoing tickets: ' . $ongoing . PHP_EOL;
-
 $solved = $db->table('tiket')->where('status', 'solved')->countAllResults();
-echo 'Solved tickets: ' . $solved . PHP_EOL;
+echo "Ongoing tickets: $ongoing\n";
+echo "Solved tickets: $solved\n";
 
-$today = $db->table('tiket')->where('DATE(create_date)', date('Y-m-d'))->countAllResults();
-echo 'Today tickets: ' . $today . PHP_EOL;
+// Check today's tickets
+$today = date('Y-m-d');
+$todayTickets = $db->table('tiket')
+    ->where('DATE(create_date)', $today)
+    ->countAllResults();
+echo "Today's tickets: $todayTickets\n";
 
-// Show some sample tickets
-echo PHP_EOL . 'Sample tickets:' . PHP_EOL;
-$tickets = $db->table('tiket')->limit(5)->get()->getResult();
+// Get sample tickets
+$tickets = $db->table('tiket')
+    ->select('tiket.*, nama_karyawan, departemen_karyawan')
+    ->join('karyawan', 'karyawan.karyawan_id = tiket.karyawan_id')
+    ->orderBy('tiket.create_date', 'DESC')
+    ->limit(10)
+    ->get()
+    ->getResultArray();
+
+echo "\nSample tickets (last 10):\n";
 foreach ($tickets as $ticket) {
-    echo 'ID: ' . $ticket->tiket_id . ', Status: ' . $ticket->status . ', Date: ' . $ticket->create_date . PHP_EOL;
+    echo "- ID: {$ticket['tiket_id']}, Name: {$ticket['nama_karyawan']}, Type: {$ticket['jenis_tiket']}, Status: {$ticket['status']}, Date: {$ticket['create_date']}\n";
 }

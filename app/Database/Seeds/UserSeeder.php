@@ -30,6 +30,13 @@ class UserSeeder extends Seeder
                 'createdat_users' => date("Y-m-d H:i:s"),
                 'role'           => 1,
             ],
+            [
+                'nama_users'     => 'Test User',
+                'email_users'    => 'test@mail.com',
+                'password_users' => password_hash('testpass', PASSWORD_BCRYPT),
+                'createdat_users' => date("Y-m-d H:i:s"),
+                'role'           => 2,
+            ],
         ];
 
         foreach ($data as $user) {

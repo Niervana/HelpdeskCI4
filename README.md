@@ -1,62 +1,247 @@
-# CodeIgniter 4 Application Starter
+# IT Helpdesk Inventory Collector Integration
 
-## What is CodeIgniter?
+Integrasi script Python untuk pengumpulan spesifikasi PC otomatis pada sistem IT Helpdesk berbasis CodeIgniter 4.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## 📋 Overview
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+Sistem ini memungkinkan user untuk secara otomatis mengumpulkan spesifikasi PC mereka melalui script Python dan mengirimkannya ke server IT Helpdesk untuk memperbarui inventory.
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+### Flow Sistem:
 
-The user guide corresponding to the latest version of the framework can be found
-[here](https://codeigniter4.github.io/userguide/).
+1. User melakukan registrasi → akun dibuat + record inventory kosong
+2. User download script Python dari dashboard
+3. User jalankan script → otomatis collect data PC → kirim ke API CI4
+4. Server update inventory berdasarkan email user
 
-## Installation & updates
+## 🛠️ Technical Requirements
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+### Python Script:
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+- **Python Version**: 3.6+
+- **OS Support**: Windows 7/8/10/11
+- **Dependencies**: psutil, requests
 
-## Setup
+### CI4 Backend:
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+- **Framework**: CodeIgniter 4
+- **Database**: MySQL/MariaDB
+- **API**: RESTful dengan ResponseTrait
 
-## Important Change with index.php
+## 📁 File Structure
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+```
+project-root/
+├── inventory_collector.py      # Script Python utama
+├── requirements.txt            # Dependencies Python
+├── README.md                   # Dokumentasi ini
+└── app/
+    ├── Controllers/
+    │   └── Api.php            # API endpoint update-main-device
+    ├── Config/
+    │   └── Routes.php         # Route API
+    └── Views/
+        └── v_download_script.php # Halaman download script
+```
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+## 🚀 Setup & Installation
 
-**Please** read the user guide for a better explanation of how CI4 works!
+### 1. Python Environment Setup
 
-## Repository Management
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+# Atau install manual
+pip install psutil>=5.8.0 requests>=2.25.1
+# Windows only:
+pip install wmi>=1.5.1
+```
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+### 2. CI4 Configuration
 
-## Server Requirements
+#### Routes (app/Config/Routes.php)
 
-PHP version 7.4 or higher is required, with the following extensions installed:
+```php
+$routes->group('api', function ($routes) {
+    // ... existing routes ...
+    $routes->post('update-main-device', 'Api::updateMainDevice');
+});
+```
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+#### API Controller (app/Controllers/Api.php)
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+Method `updateMainDevice()` sudah ditambahkan dengan:
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+- Validasi email dan data
+- Rate limiting (10 request/user/jam)
+- Update/Create maindevice record
+- Logging perubahan
+
+### 3. Database Structure
+
+Sistem menggunakan tabel existing:
+
+- `users` (email_users, nama_users)
+- `karyawan` (nama_karyawan, departemen_karyawan)
+- `inventory` (karyawan_id, main_id, support_id)
+- `maindevice` (manufaktur, cpu, ram, os, dll.)
+- `log` (logging perubahan)
+
+## 📊 Data yang Dikumpulkan
+
+Script Python mengumpulkan spesifikasi berikut:
+
+| Field      | Description      | Source                  |
+| ---------- | ---------------- | ----------------------- |
+| manufaktur | Manufacturer PC  | Manual input by admin   |
+| cpu        | CPU Information  | psutil.cpu_info()       |
+| ram        | RAM Capacity     | psutil.virtual_memory() |
+| os         | Operating System | platform.platform()     |
+| ipaddress  | IP Address       | socket.gethostbyname()  |
+| hostname   | Hostname         | platform.node()         |
+| storage    | Total Storage    | psutil.disk_usage()     |
+
+**Note**: Field `jenis`, `lisensi_windows`, `credential`, `office`, `lisensi_office` diset NULL dan diisi manual oleh admin.
+
+## 🔗 API Endpoint
+
+### POST /api/update-main-device
+
+**Request Body:**
+
+```json
+{
+  "email": "user@example.com",
+  "data": {
+    "manufaktur": "Windows",
+    "cpu": "Intel Core i5",
+    "ram": "16.0 GB",
+    "os": "Windows-10-10.0.19041-SP0",
+    "ipaddress": "192.168.1.100",
+    "hostname": "DESKTOP-ABC123",
+    "storage": "500.0 GB",
+    "jenis": null,
+    "lisensi_windows": null,
+    "credential": null,
+    "office": null,
+    "lisensi_office": null
+  }
+}
+```
+
+**Response Success:**
+
+```json
+{
+  "status": "success",
+  "message": "Main device data updated successfully",
+  "main_id": 123
+}
+```
+
+**Response Error:**
+
+```json
+{
+  "status": "error",
+  "message": "User not found"
+}
+```
+
+## 🎯 Usage Guide
+
+### Untuk User:
+
+1. **Registrasi**: Daftar akun di sistem IT Helpdesk
+2. **Download Script**: Akses menu "Download Script" di sidebar
+3. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. **Jalankan Script**:
+   ```bash
+   python inventory_collector.py
+   ```
+5. **Input Email**: Masukkan email yang didaftarkan
+6. **Konfirmasi**: Script akan menampilkan data yang dikumpul, konfirmasi sebelum kirim
+7. **Selesai**: Data terkirim ke server, inventory terupdate
+
+### Untuk Admin:
+
+- Monitor log perubahan di tabel `log`
+- Lengkapi data manual (jenis device, lisensi, dll.) melalui admin panel
+- Manage inventory melalui interface existing
+
+## 🔒 Security & Rate Limiting
+
+- **Rate Limiting**: 10 request per user per jam
+- **Email Validation**: Validasi format email dan existence di database
+- **Data Validation**: Validasi struktur data yang dikirim
+- **Logging**: Semua perubahan dicatat di tabel log
+
+## 🐛 Troubleshooting
+
+### Script Python Tidak Berjalan:
+
+- Pastikan Python 3.6+ terinstall
+- Install dependencies: `pip install -r requirements.txt`
+
+### Error "User not found":
+
+- Pastikan email yang diinput sudah terdaftar di sistem
+- Periksa koneksi internet
+
+### Error "Rate limit exceeded":
+
+- Tunggu 1 jam sebelum mencoba lagi
+- Atau hubungi admin untuk reset limit
+
+### Data Tidak Update di Dashboard:
+
+- Refresh halaman dashboard
+- Pastikan script berhasil mengirim data (lihat pesan sukses)
+- Hubungi admin jika masalah berlanjut
+
+## 📝 Development Notes
+
+### Menambah Field Baru:
+
+1. Update migration `maindevice` table
+2. Update script Python untuk collect data baru
+3. Update API controller untuk handle field baru
+4. Update dokumentasi
+
+### Testing:
+
+```bash
+# Test API endpoint
+curl -X POST http://localhost/api/update-main-device \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","data":{...}}'
+
+# Test Python script
+python inventory_collector.py
+```
+
+## 🤝 Contributing
+
+Untuk pengembangan lebih lanjut:
+
+- Tambahkan error handling yang lebih robust
+- Support untuk OS lain (Linux, macOS)
+- GUI interface untuk script Python
+- Batch processing untuk multiple devices
+
+## 📞 Support
+
+Untuk bantuan atau pertanyaan:
+
+- Buat issue di repository GitHub
+- Hubungi tim IT Helpdesk
+- Dokumentasi lengkap tersedia di wiki project
+
+---
+
+**Version**: 1.0.0
+**Last Updated**: 2025-01-15
+**Compatible**: Windows 7/8/10/11, Python 3.6+

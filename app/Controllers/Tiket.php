@@ -30,7 +30,7 @@ class Tiket extends BaseController
         $user = userLogin();
         if ($user && $user->role == 1) {
             // Admin view - existing logic
-            $filter = $this->request->getGet('filter') ?? 'today';
+            $filter = $this->request->getGet('filter') ?? 'all';
             $jenisFilter = $this->request->getGet('jenis') ?? 'all';
             $startDate = $this->request->getGet('start_date');
             $endDate = $this->request->getGet('end_date');
@@ -387,7 +387,7 @@ class Tiket extends BaseController
 
     public function getFilteredData()
     {
-        $filter = $this->request->getGet('filter') ?? 'today';
+        $filter = $this->request->getGet('filter') ?? 'all';
         $jenisFilter = $this->request->getGet('jenis') ?? 'all';
         $startDate = $this->request->getGet('start_date');
         $endDate = $this->request->getGet('end_date');
@@ -419,7 +419,7 @@ class Tiket extends BaseController
 
     public function print()
     {
-        $filter = $this->request->getGet('filter') ?? 'today';
+        $filter = $this->request->getGet('filter') ?? 'all';
         $jenisFilter = $this->request->getGet('jenis') ?? 'all';
         $startDate = $this->request->getGet('start_date');
         $endDate = $this->request->getGet('end_date');

@@ -104,7 +104,7 @@
                             </div>
                             <div class="form-group">
                                 <label>RAM</label>
-                                <input type="number" name="ram" class="form-control">
+                                <input type="text" name="ram" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label>OS</label>
@@ -116,7 +116,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Storage</label>
-                                <input type="number" name="storage" class="form-control">
+                                <input type="text" name="storage" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label>Office</label>

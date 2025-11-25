@@ -406,23 +406,6 @@ class Inventory extends BaseController
         $dompdf->render();
         $dompdf->stream('data_inventory_support_device.pdf', array('Attachment' => 0));
     }
-    // old ver
-    // public function print()
-    // {
-    //     $model = new InventoryModel();
-    //     $data['inventory'] = $model->getAllInventory();
-    //     if (empty($data['inventory'])) {
-    //         return redirect()->to(site_url('inventory'))->with('error', 'Tidak ada data untuk dicetak');
-    //     }
-
-    //     // Load dompdf
-    //     $dompdf = new \Dompdf\Dompdf();
-    //     $html = view('inventory/v_print_inventory', $data);
-    //     $dompdf->loadHtml($html);
-    //     $dompdf->setPaper('A4', 'landscape');
-    //     $dompdf->render();
-    //     $dompdf->stream('data_inventory.pdf', array('Attachment' => 0));
-    // }
 
     public function excel()
     {

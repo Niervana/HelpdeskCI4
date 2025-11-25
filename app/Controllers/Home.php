@@ -95,12 +95,17 @@ class Home extends BaseController
                     ->get()
                     ->getResult();
 
+                // Get berita acara data (all, like admin dashboard)
+                $beritaAcaraModel = new \App\Models\BeritaAcaraModel();
+                $berita_acara = $beritaAcaraModel->getWithDetails(10); // Get 10 latest
+
                 $data = [
                     'today_count' => $todayCount,
                     'week_count' => $weekCount,
                     'month_count' => $monthCount,
                     'total_count' => $totalCount,
-                    'user_devices' => $userDevices
+                    'user_devices' => $userDevices,
+                    'berita_acara' => $berita_acara
                 ];
             } else {
                 $data = [
@@ -116,5 +121,10 @@ class Home extends BaseController
         } else {
             return redirect()->to(site_url('auth/login'));
         }
+    }
+
+    public function download_script()
+    {
+        return view('v_download_script');
     }
 }

@@ -111,23 +111,23 @@
                                     ];
                                     echo $hari_indonesia[$hari] ?? $hari;
                                     ?></strong> tanggal <strong><?= date('d', strtotime($berita_acara['tanggal'])) ?></strong> bulan <strong><?php
-                                                                                                                    $bulan = date('F', strtotime($berita_acara['tanggal']));
-                                                                                                                    $bulan_indonesia = [
-                                                                                                                        'January' => 'Januari',
-                                                                                                                        'February' => 'Februari',
-                                                                                                                        'March' => 'Maret',
-                                                                                                                        'April' => 'April',
-                                                                                                                        'May' => 'Mei',
-                                                                                                                        'June' => 'Juni',
-                                                                                                                        'July' => 'Juli',
-                                                                                                                        'August' => 'Agustus',
-                                                                                                                        'September' => 'September',
-                                                                                                                        'October' => 'Oktober',
-                                                                                                                        'November' => 'November',
-                                                                                                                        'December' => 'Desember'
-                                                                                                                    ];
-                                                                                                                    echo $bulan_indonesia[$bulan] ?? $bulan;
-                                                                                                                    ?></strong> tahun <strong><?= date('Y', strtotime($berita_acara['tanggal'])) ?></strong>, telah dilakukan kegiatan sebagai berikut:</p>
+                                                                                                                                                $bulan = date('F', strtotime($berita_acara['tanggal']));
+                                                                                                                                                $bulan_indonesia = [
+                                                                                                                                                    'January' => 'Januari',
+                                                                                                                                                    'February' => 'Februari',
+                                                                                                                                                    'March' => 'Maret',
+                                                                                                                                                    'April' => 'April',
+                                                                                                                                                    'May' => 'Mei',
+                                                                                                                                                    'June' => 'Juni',
+                                                                                                                                                    'July' => 'Juli',
+                                                                                                                                                    'August' => 'Agustus',
+                                                                                                                                                    'September' => 'September',
+                                                                                                                                                    'October' => 'Oktober',
+                                                                                                                                                    'November' => 'November',
+                                                                                                                                                    'December' => 'Desember'
+                                                                                                                                                ];
+                                                                                                                                                echo $bulan_indonesia[$bulan] ?? $bulan;
+                                                                                                                                                ?></strong> tahun <strong><?= date('Y', strtotime($berita_acara['tanggal'])) ?></strong>, telah dilakukan kegiatan sebagai berikut:</p>
 
         <table class="info-table">
             <tr>
