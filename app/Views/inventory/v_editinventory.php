@@ -36,7 +36,33 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Departemen*</label>
-                                    <input type="text" name="departemen_karyawan" value="<?= $inventory->departemen_karyawan ?>" class="form-control" required>
+                                    <select class="form-control" name="departemen_karyawan" required>
+                                        <option value="" disabled>Pilih Departemen</option>
+                                        <option value="ACCOUNTING" <?= $inventory->departemen_karyawan == 'ACCOUNTING' ? 'selected' : '' ?>>ACCOUNTING</option>
+                                        <option value="ADM MEKANIK" <?= $inventory->departemen_karyawan == 'ADM MEKANIK' ? 'selected' : '' ?>>ADM MEKANIK</option>
+                                        <option value="ADM PRODUKSI" <?= $inventory->departemen_karyawan == 'ADM PRODUKSI' ? 'selected' : '' ?>>ADM PRODUKSI</option>
+                                        <option value="ADM SAMPLE" <?= $inventory->departemen_karyawan == 'ADM SAMPLE' ? 'selected' : '' ?>>ADM SAMPLE</option>
+                                        <option value="ASS. MD" <?= $inventory->departemen_karyawan == 'ASS. MD' ? 'selected' : '' ?>>ASS. MD</option>
+                                        <option value="CMT" <?= $inventory->departemen_karyawan == 'CMT' ? 'selected' : '' ?>>CMT</option>
+                                        <option value="COMPLIANCE" <?= $inventory->departemen_karyawan == 'COMPLIANCE' ? 'selected' : '' ?>>COMPLIANCE</option>
+                                        <option value="CUTTING" <?= $inventory->departemen_karyawan == 'CUTTING' ? 'selected' : '' ?>>CUTTING</option>
+                                        <option value="EXIM" <?= $inventory->departemen_karyawan == 'EXIM' ? 'selected' : '' ?>>EXIM</option>
+                                        <option value="HR" <?= $inventory->departemen_karyawan == 'HR' ? 'selected' : '' ?>>HR</option>
+                                        <option value="IE" <?= $inventory->departemen_karyawan == 'IE' ? 'selected' : '' ?>>IE</option>
+                                        <option value="IT" <?= $inventory->departemen_karyawan == 'IT' ? 'selected' : '' ?>>IT</option>
+                                        <option value="MARKER" <?= $inventory->departemen_karyawan == 'MARKER' ? 'selected' : '' ?>>MARKER</option>
+                                        <option value="MD" <?= $inventory->departemen_karyawan == 'MD' ? 'selected' : '' ?>>MD</option>
+                                        <option value="PACKING" <?= $inventory->departemen_karyawan == 'PACKING' ? 'selected' : '' ?>>PACKING</option>
+                                        <option value="PPIC" <?= $inventory->departemen_karyawan == 'PPIC' ? 'selected' : '' ?>>PPIC</option>
+                                        <option value="PSO" <?= $inventory->departemen_karyawan == 'PSO' ? 'selected' : '' ?>>PSO</option>
+                                        <option value="PURCHASING" <?= $inventory->departemen_karyawan == 'PURCHASING' ? 'selected' : '' ?>>PURCHASING</option>
+                                        <option value="QA" <?= $inventory->departemen_karyawan == 'QA' ? 'selected' : '' ?>>QA</option>
+                                        <option value="QC" <?= $inventory->departemen_karyawan == 'QC' ? 'selected' : '' ?>>QC</option>
+                                        <option value="SALES" <?= $inventory->departemen_karyawan == 'SALES' ? 'selected' : '' ?>>SALES</option>
+                                        <option value="SAMPLE" <?= $inventory->departemen_karyawan == 'SAMPLE' ? 'selected' : '' ?>>SAMPLE</option>
+                                        <option value="SEWING" <?= $inventory->departemen_karyawan == 'SEWING' ? 'selected' : '' ?>>SEWING</option>
+                                        <option value="WAREHOUSE" <?= $inventory->departemen_karyawan == 'WAREHOUSE' ? 'selected' : '' ?>>WAREHOUSE</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label>Email*</label>
@@ -44,7 +70,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Password*</label>
-                                    <input type="password" name="password_users" value="<?= $inventory->password_users ?>" class="form-control" required>
+                                    <input type="text" name="password_users" value="<?= $inventory->password_users ?>" class="form-control" required>
                                 </div>
                             </div>
                         </div>

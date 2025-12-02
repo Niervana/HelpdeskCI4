@@ -95,6 +95,8 @@ use App\Controllers\Auth;
                                             <option value="PURCHASING">PURCHASING</option>
                                             <option value="QA">QA</option>
                                             <option value="QC">QC</option>
+                                            <option value="SALES">SALES</option>
+                                            <option value="SAMPLE">SAMPLE</option>
                                             <option value="SEWING">SEWING</option>
                                             <option value="WAREHOUSE">WAREHOUSE</option>
                                         </select>

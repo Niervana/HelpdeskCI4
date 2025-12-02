@@ -125,6 +125,10 @@ class Home extends BaseController
 
     public function download_script()
     {
+        $user = userLogin();
+        if (!$user) {
+            return redirect()->to(site_url('auth/login'));
+        }
         return view('v_download_script');
     }
 }

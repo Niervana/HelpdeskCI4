@@ -7,6 +7,7 @@ use App\Models\NotificationModel;
 use App\Models\UsersModel;
 use App\Models\KaryawanModel;
 use App\Models\InventoryModel;
+use App\Models\LogModel;
 
 class Api extends ResourceController
 {
@@ -14,6 +15,7 @@ class Api extends ResourceController
     protected $usersModel;
     protected $karyawanModel;
     protected $inventoryModel;
+    protected $logModel;
     protected $db;
 
     public function __construct()
@@ -22,6 +24,7 @@ class Api extends ResourceController
         $this->usersModel = new UsersModel();
         $this->karyawanModel = new KaryawanModel();
         $this->inventoryModel = new InventoryModel();
+        $this->logModel = new LogModel();
         $this->db = \Config\Database::connect();
     }
 
@@ -144,6 +147,10 @@ class Api extends ResourceController
             // First, try to find user by email (for registered users)
             $user = $this->usersModel->where('email_users', $email)->first();
 
+            // Initialize variables
+            $logUserId = null;
+            $karyawan = null;
+
             if ($user) {
                 // User exists, validate and proceed with user-based lookup
                 if (!isset($user['id_users']) || empty($user['id_users']) || !is_numeric($user['id_users'])) {
@@ -154,6 +161,9 @@ class Api extends ResourceController
                 if (!$userExists) {
                     return $this->failServerError('User validation failed: user ID does not exist in database');
                 }
+
+                // Set log user ID from authenticated user
+                $logUserId = (int)$user['id_users'];
 
                 // Find karyawan by nama_karyawan matching user's nama_users
                 $karyawan = $this->karyawanModel->where('nama_karyawan', $user['nama_users'])->first();
@@ -189,8 +199,26 @@ class Api extends ResourceController
                     return $this->failNotFound('Employee record not found. Please contact IT administrator to create your employee profile or ensure your email matches your employee name.');
                 }
 
-                // For non-registered users, we'll use a default user ID (admin) for logging
-                $user = ['id_users' => 1]; // Default to first admin user for logging
+                // For non-registered users, try to find a default system user for logging
+                // First try to find admin user (role = 1)
+                $defaultUser = $this->usersModel->where('role', 1)->first();
+                if ($defaultUser && isset($defaultUser['id_users'])) {
+                    $logUserId = (int)$defaultUser['id_users'];
+                } else {
+                    // Fallback: find any valid user
+                    $defaultUser = $this->usersModel->first();
+                    if ($defaultUser && isset($defaultUser['id_users'])) {
+                        $logUserId = (int)$defaultUser['id_users'];
+                    } else {
+                        // No valid user found in database - this is a critical error
+                        return $this->failServerError('System error: No valid user found in database for logging. Please contact IT administrator.');
+                    }
+                }
+            }
+
+            // Verify we have a valid user ID for logging
+            if ($logUserId === null || !is_numeric($logUserId) || $logUserId <= 0) {
+                return $this->failServerError('System error: Cannot determine valid user for logging. Please contact IT administrator.');
             }
 
             // Find inventory by karyawan_id
@@ -200,9 +228,6 @@ class Api extends ResourceController
             }
 
             // Prepare maindevice data
-            // Note: manufaktur now collected automatically by script
-            // jenis, lisensi_windows, credential, office, lisensi_office
-            // will be filled manually by admin (role 1) through the web interface
             $mainDeviceData = [
                 'manufaktur' => $deviceData['manufaktur'] ?? null,
                 'cpu' => $deviceData['cpu'] ?? null,
@@ -215,42 +240,65 @@ class Api extends ResourceController
 
             // Insert or update maindevice
             if ($inventory['main_id']) {
-                // Update existing
-                $this->db->table('maindevice')->where('main_id', $inventory['main_id'])->update($mainDeviceData);
+                // FIXED: Get data BEFORE update (not after)
+                $beforeData = $this->db->table('maindevice')
+                    ->where('main_id', $inventory['main_id'])
+                    ->get()
+                    ->getRowArray();
 
-                // Log the update
+                // Update existing
+                $this->db->table('maindevice')
+                    ->where('main_id', $inventory['main_id'])
+                    ->update($mainDeviceData);
+
+                // Log the update with proper error handling
                 $logData = [
                     'inventory_id' => $inventory['inventory_id'],
                     'nama_karyawan' => $karyawan['nama_karyawan'],
                     'action_type' => 'update',
-                    'before_change' => json_encode($this->db->table('maindevice')->where('main_id', $inventory['main_id'])->get()->getRowArray()),
+                    'before_change' => json_encode($beforeData),
                     'after_change' => json_encode($mainDeviceData),
-                    'users_id' => $user['id_users'], // Use the actual user ID from the found user
+                    'users_id' => $logUserId,
                     'action_date' => date('Y-m-d H:i:s'),
                     'ip_address' => $this->request->getIPAddress(),
                     'description' => 'Main device updated via API script'
                 ];
-                $this->db->table('log')->insert($logData);
+
+                try {
+                    $this->logModel->insert($logData);
+                } catch (\Exception $e) {
+                    // Log error but don't fail the request
+                    log_message('error', 'Failed to insert log entry: ' . $e->getMessage());
+                    // Continue - main update was successful
+                }
             } else {
                 // Insert new
                 $this->db->table('maindevice')->insert($mainDeviceData);
                 $mainId = $this->db->insertID();
+
                 // Update inventory with main_id
                 $this->inventoryModel->update($inventory['inventory_id'], ['main_id' => $mainId]);
 
-                // Log the creation
+                // Log the creation with proper error handling
                 $logData = [
                     'inventory_id' => $inventory['inventory_id'],
                     'nama_karyawan' => $karyawan['nama_karyawan'],
                     'action_type' => 'create',
                     'before_change' => null,
                     'after_change' => json_encode($mainDeviceData),
-                    'users_id' => $user['id_users'], // Use the actual user ID from the found user
+                    'users_id' => $logUserId,
                     'action_date' => date('Y-m-d H:i:s'),
                     'ip_address' => $this->request->getIPAddress(),
                     'description' => 'Main device created via API script'
                 ];
-                $this->db->table('log')->insert($logData);
+
+                try {
+                    $this->logModel->insert($logData);
+                } catch (\Exception $e) {
+                    // Log error but don't fail the request
+                    log_message('error', 'Failed to insert log entry: ' . $e->getMessage());
+                    // Continue - main insert was successful
+                }
             }
 
             return $this->respond([

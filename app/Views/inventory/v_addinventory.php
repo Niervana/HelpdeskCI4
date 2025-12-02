@@ -35,7 +35,33 @@
                             </div>
                             <div class="form-group">
                                 <label>Departemen*</label>
-                                <input type="text" name="departemen_karyawan" class="form-control" required>
+                                <select class="form-control" name="departemen_karyawan" required>
+                                    <option value="" disabled selected>Pilih Departemen</option>
+                                    <option value="ACCOUNTING">ACCOUNTING</option>
+                                    <option value="ADM MEKANIK">ADM MEKANIK</option>
+                                    <option value="ADM PRODUKSI">ADM PRODUKSI</option>
+                                    <option value="ADM SAMPLE">ADM SAMPLE</option>
+                                    <option value="ASS. MD">ASS. MD</option>
+                                    <option value="CMT">CMT</option>
+                                    <option value="COMPLIANCE">COMPLIANCE</option>
+                                    <option value="CUTTING">CUTTING</option>
+                                    <option value="EXIM">EXIM</option>
+                                    <option value="HR">HR</option>
+                                    <option value="IE">IE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="MARKER">MARKER</option>
+                                    <option value="MD">MD</option>
+                                    <option value="PACKING">PACKING</option>
+                                    <option value="PPIC">PPIC</option>
+                                    <option value="PSO">PSO</option>
+                                    <option value="PURCHASING">PURCHASING</option>
+                                    <option value="QA">QA</option>
+                                    <option value="QC">QC</option>
+                                    <option value="SALES">SALES</option>
+                                    <option value="SAMPLE">SAMPLE</option>
+                                    <option value="SEWING">SEWING</option>
+                                    <option value="WAREHOUSE">WAREHOUSE</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label>Email*</label>

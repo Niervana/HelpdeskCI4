@@ -95,40 +95,23 @@ def get_ram_info():
     try:
         import wmi
         wmi_obj = wmi.WMI()
-        
+
         # Get physical memory modules
         total_ram = 0
         for memory in wmi_obj.Win32_PhysicalMemory():
             capacity = int(memory.Capacity)
             total_ram += capacity
-        
+
         # Convert bytes to GB
         ram_gb = total_ram / (1024 ** 3)
-        
-        # Round to common RAM sizes
-        if ram_gb >= 15 and ram_gb < 17:
-            return "16"
-        elif ram_gb >= 7 and ram_gb < 9:
-            return "8"
-        elif ram_gb >= 31 and ram_gb < 33:
-            return "32"
-        elif ram_gb >= 3 and ram_gb < 5:
-            return "4"
-        elif ram_gb >= 63 and ram_gb < 65:
-            return "64"
-        else:
-            return f"{ram_gb:.0f}"
+
+        # Return exact RAM size
+        return f"{ram_gb:.0f} GB"
     except:
         # Fallback to psutil
         try:
             ram_gb = psutil.virtual_memory().total / (1024 ** 3)
-            # Round to nearest common size
-            if ram_gb >= 15 and ram_gb < 17:
-                return "16"
-            elif ram_gb >= 7 and ram_gb < 9:
-                return "8"
-            else:
-                return f"{ram_gb:.0f}"
+            return f"{ram_gb:.0f}"
         except:
             return "Unknown"
 
@@ -139,8 +122,19 @@ def get_os_info():
         import wmi
         wmi_obj = wmi.WMI()
         os_info = wmi_obj.Win32_OperatingSystem()[0]
-        os_name = os_info.Caption
-        return os_name
+        os_name = os_info.Caption.replace("Microsoft ", "").strip()
+        build = os_info.BuildNumber
+        release_map = {
+            "19041": "20H2",
+            "19042": "20H2",
+            "19043": "21H2",
+            "19044": "21H2",
+            "19045": "22H2",
+            "22000": "21H2",
+            "22621": "22H2",
+        }
+        release = release_map.get(build, build)
+        return f"{os_name} {release}"
     except:
         return "Unknown OS"
 
@@ -164,59 +158,196 @@ def get_hostname():
 
 
 def get_storage_info():
-    """Get physical storage information."""
+    """Get physical storage information with accurate type detection using multiple methods."""
+    try:
+        import wmi
+        wmi_obj = wmi.WMI()
+
+        storages = []
+        for disk in wmi_obj.Win32_DiskDrive():
+            storage_name = disk.Model
+            storage_size_bytes = int(disk.Size)
+            
+            # Use decimal (base-10) calculation to match physical/marketing capacity
+            storage_size_gb_decimal = storage_size_bytes / (1000**3)
+
+            # Get all relevant properties
+            interface_type = getattr(disk, 'InterfaceType', '').upper()
+            media_type = getattr(disk, 'MediaType', '').upper()
+            pnp_device_id = getattr(disk, 'PNPDeviceID', '').upper()
+            caption = getattr(disk, 'Caption', '').upper()
+            description = getattr(disk, 'Description', '').upper()
+            
+            # Initialize storage type
+            storage_type = "HDD"
+            storage_name_upper = storage_name.upper()
+            
+            # === METHOD 1: Direct NVMe Detection ===
+            nvme_detected = False
+            
+            # Check in multiple fields
+            nvme_keywords = ["NVME", "NVM EXPRESS", "NVME SSD"]
+            search_fields = [
+                interface_type,
+                pnp_device_id,
+                storage_name_upper,
+                caption,
+                description
+            ]
+            
+            for field in search_fields:
+                if any(keyword in field for keyword in nvme_keywords):
+                    nvme_detected = True
+                    break
+            
+            # Additional check: PCIe in model name usually indicates NVMe
+            if "PCIE" in storage_name_upper and any(term in storage_name_upper for term in ["SSD", "SOLID"]):
+                nvme_detected = True
+            
+            if nvme_detected:
+                storage_type = "NVMe"
+            
+            # === METHOD 2: SSD Detection (if not NVMe) ===
+            elif not nvme_detected:
+                ssd_detected = False
+                
+                # Direct SSD keywords in name/description
+                ssd_keywords = ["SSD", "SOLID STATE", "SATA SSD"]
+                for field in [storage_name_upper, media_type, caption, description]:
+                    if any(keyword in field for keyword in ssd_keywords):
+                        ssd_detected = True
+                        break
+                
+                # Known SSD brand patterns
+                ssd_brand_patterns = [
+                    "SAMSUNG SSD", "KINGSTON SSD", "WD SSD", "CRUCIAL SSD",
+                    "INTEL SSD", "SANDISK SSD", "CORSAIR SSD", "ADATA SSD",
+                    "GIGABYTE SSD", "SEAGATE SSD", "TOSHIBA SSD"
+                ]
+                
+                for pattern in ssd_brand_patterns:
+                    if pattern in storage_name_upper:
+                        ssd_detected = True
+                        break
+                
+                if ssd_detected:
+                    storage_type = "SSD SATA"
+                else:
+                    # === METHOD 3: Heuristic Detection ===
+                    # Some SSDs don't explicitly say "SSD" in their name
+                    # We can use heuristics based on known SSD characteristics
+                    
+                    # Known SSD model number patterns
+                    import re
+                    
+                    # Samsung: 850/860/870/980 EVO, PRO, QVO
+                    if re.search(r'(8[5-7]0|9[0-8]0)\s*(EVO|PRO|QVO)', storage_name_upper):
+                        storage_type = "SSD SATA"
+                        ssd_detected = True
+                    
+                    # Crucial: MX/BX/P series
+                    if re.search(r'(MX|BX|P)\d{3}', storage_name_upper):
+                        storage_type = "SSD SATA"
+                        ssd_detected = True
+                    
+                    # WD: Blue/Green/Black with SN/SA number
+                    if re.search(r'(SN|SA)\d{3,4}', storage_name_upper) and any(color in storage_name_upper for color in ['BLUE', 'GREEN', 'BLACK']):
+                        storage_type = "SSD SATA"
+                        ssd_detected = True
+                    
+                    # Kingston: SA/SUV/SKC models
+                    if re.search(r'(SA|SUV|SKC)\d{3}', storage_name_upper):
+                        storage_type = "SSD SATA"
+                        ssd_detected = True
+                    
+                    # Micron-based SSDs (but not marked as NVMe)
+                    # Only if not already detected as NVMe
+                    if 'MICRON' in storage_name_upper and not nvme_detected:
+                        # Micron makes both SATA SSDs and NVMe
+                        # If we reach here and it's Micron, it's likely SATA SSD
+                        if any(indicator in storage_name_upper for indicator in ['MTFD', '1100', '5100', '5200', '5300']):
+                            storage_type = "SSD SATA"
+                            ssd_detected = True
+
+            # === METHOD 4: Interface-based Override ===
+            # Final sanity check based on interface type
+            if storage_type in ["SSD SATA", "NVMe"]:
+                # If interface is IDE, it's definitely not SSD/NVMe (too old)
+                if interface_type == "IDE":
+                    # Unless name explicitly says SSD (rare case)
+                    if "SSD" not in storage_name_upper and "NVME" not in pnp_device_id:
+                        storage_type = "HDD"
+                
+                # USB drives could be SSD but usually external
+                # Keep detection if explicitly labeled as SSD
+                elif interface_type == "USB":
+                    if not any(term in storage_name_upper for term in ["SSD", "SOLID STATE"]):
+                        if "NVME" not in pnp_device_id:
+                            # Could be external HDD, but keep SSD if detected
+                            pass  # Keep current detection
+
+            # === Capacity Rounding ===
+            # Round to common physical storage sizes
+            capacity_map = {
+                (120, 125): "120",
+                (125, 135): "128",
+                (240, 250): "240",
+                (250, 270): "256",
+                (480, 500): "500",
+                (500, 520): "512",
+                (950, 1000): "1000",
+                (1000, 1050): "1024",
+                (1900, 2000): "2000",
+                (2000, 2100): "2048",
+                (3900, 4000): "4000",
+                (4000, 4200): "4096",
+            }
+            
+            storage_capacity = None
+            for (min_size, max_size), capacity in capacity_map.items():
+                if min_size <= storage_size_gb_decimal < max_size:
+                    storage_capacity = capacity
+                    break
+            
+            if storage_capacity is None:
+                # Non-standard size, round to nearest whole number
+                storage_capacity = f"{storage_size_gb_decimal:.0f}"
+
+            storages.append(f"{storage_type} {storage_capacity} GB")
+
+        return ", ".join(storages) if storages else "Unknown"
+        
+    except Exception as e:
+        return f"Unknown (Error: {str(e)})"
+
+
+# Optional: Tambahkan fungsi helper untuk testing
+def test_storage_detection():
+    """Test function to verify storage detection on current system."""
+    print("\n" + "="*70)
+    print("STORAGE DETECTION TEST")
+    print("="*70)
+    
     try:
         import wmi
         wmi_obj = wmi.WMI()
         
-        # Get first physical disk
-        disk = wmi_obj.Win32_DiskDrive()[0]
-        storage_name = disk.Model  # contoh: "Samsung MZVL2512HCJQ-00B00"
-        storage_size_bytes = int(disk.Size)
-        storage_size_gb = storage_size_bytes / (1024**3)
-        
-        # Get interface type to determine if it's NVMe
-        interface_type = getattr(disk, 'InterfaceType', '').upper()
-        
-        # Determine storage type
-        storage_type = "HDD"
-        storage_name_upper = storage_name.upper()
-        
-        # Check for NVMe - prioritas tertinggi
-        if interface_type == "NVME" or "NVME" in storage_name_upper:
-            storage_type = "SSD NVMe M.2"
-        # Check for other SSD indicators
-        elif any(indicator in storage_name_upper for indicator in ["SSD", "SOLID STATE"]):
-            storage_type = "SSD"
-        # Check based on common SSD manufacturer names
-        elif any(brand in storage_name_upper for brand in ["SAMSUNG", "KINGSTON", "WD", "CRUCIAL", "INTEL", "SANDISK", "ADATA", "SK HYNIX", "MICRON", "TOSHIBA", "SEAGATE BARRACUDA SSD"]):
-            # Most modern SSDs from these brands in M.2 form factor are NVMe
-            if storage_size_gb >= 240:  # M.2 NVMe typically 256GB+
-                storage_type = "SSD NVMe M.2"
-            else:
-                storage_type = "SSD"
-        # Default to HDD if no SSD indicators found
-        else:
-            storage_type = "HDD"
-        
-        # Round to common storage sizes
-        if storage_size_gb >= 480 and storage_size_gb < 550:
-            storage_capacity = "512"
-        elif storage_size_gb >= 240 and storage_size_gb < 270:
-            storage_capacity = "256"
-        elif storage_size_gb >= 120 and storage_size_gb < 135:
-            storage_capacity = "128"
-        elif storage_size_gb >= 950 and storage_size_gb < 1100:
-            storage_capacity = "1024"
-        elif storage_size_gb >= 1900 and storage_size_gb < 2100:
-            storage_capacity = "2048"
-        else:
-            storage_capacity = f"{storage_size_gb:.0f}"
-        
-        storage = f"{storage_type} {storage_capacity} GB"
-        return storage
+        for idx, disk in enumerate(wmi_obj.Win32_DiskDrive(), 1):
+            print(f"\nDisk #{idx}:")
+            print(f"  Model: {disk.Model}")
+            print(f"  Interface: {getattr(disk, 'InterfaceType', 'N/A')}")
+            print(f"  PNPDeviceID: {getattr(disk, 'PNPDeviceID', 'N/A')[:60]}...")
+            print(f"  Size: {int(disk.Size) / (1000**3):.2f} GB")
+            print(f"  → Detected as: {get_storage_info()}")
     except Exception as e:
-        return f"Unknown (Error: {str(e)})"
+        print(f"Error: {e}")
+    
+    print("="*70 + "\n")
+
+
+# Uncomment to run test
+# if __name__ == "__main__":
+#     test_storage_detection()
 
 
 def get_device_model():
@@ -354,7 +485,7 @@ def send_to_api(email, data):
 
 def main():
     print("=" * 60)
-    print("=== IT Helpdesk Inventory Collector ===".center(60))
+    print("=== Nirvana IT Helpdesk Inventory Collector ===".center(60))
     print("=" * 60)
     print()
     print("This script will collect your PC specifications and send them")
